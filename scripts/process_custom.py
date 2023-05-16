@@ -77,7 +77,7 @@ for imageID, slideID, imageFORM in list_of_slides:
     if n_channels != 2: 
         warnings.warn("The number of channel does not match the number of channels (YFISH,DAPI) required for WFISH analysis. Only Preprocessing performed")
 
-     # convert images to tiff: Multi FOV conversion
+    # convert images to tiff: Multi FOV conversion
     if n_fields>1: 
 
         fov_names = [(i, "F"+str(i+1)) for i in range(n_fields)]

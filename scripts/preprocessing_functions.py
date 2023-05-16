@@ -70,6 +70,6 @@ def deconvolution(slideID:str,
             dw_pipe.append(f"dw --iter {dw_iterations} --threads {threads} '{output}' {path_to_output}/PSF_{NA}_{ni}_{emission}_{dxy}_{dz}.tiff")       
         
         # splitting and running deconvolution (in series for each channel)
-        splitted = [shlex.split(i) for i in psf_pipe]
+        splitted = [shlex.split(i) for i in dw_pipe]
         dw_p = [subprocess.run(i, stdout=f) for i in splitted] 
         
