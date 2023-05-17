@@ -6,6 +6,7 @@ import numpy as np
 import extract_metadata
 import subprocess, shlex
 import preprocessing_functions
+import warnings
 
 logging.basicConfig(level=logging.INFO)
 
@@ -74,65 +75,89 @@ for imageID, slideID, imageFORM in list_of_slides:
         raise Exception(f"Preprocessing implement only for .nd2 and .czi files, please check format of {path_to_image}")
 
     if n_channels != 2: 
-        raise Exception( "Currently implemented only for 2 channel images YFISH and DAPI")
+        warnings.warn("The number of channel does not match the number of channels (YFISH,DAPI) required for WFISH analysis. Only Preprocessing performed")
 
-     # convert images to tiff: Multi FOV conversion
+    # convert images to tiff: Multi FOV conversion
     if n_fields>1: 
+
         fov_names = [(i, "F"+str(i+1)) for i in range(n_fields)]
-        name_ch0 = metadata_dw['Channel Name (ch 0)'].replace(" ", "")
-        name_ch1 = metadata_dw['Channel Name (ch 1)'].replace(" ", "")
-        NA, ni = metadata_dw["objective NA"], metadata_dw["ni oil"]
-        e_ch0, e_ch1 = metadata_dw["Dye Emission wavelength (nm) (ch 0)"], metadata_dw["Dye Emission wavelength (nm) (ch 1)"]
-        dxy, dz = metadata_dw["Pixel size x (nm)"], metadata_dw["Pixel size z (nm)"]
 
         for fov_idx, fov_name in fov_names: 
-            output_ch0 = f"{path_to_output}/{name_ch0}_{slideID}_{fov_name}.tiff"  
-            output_ch1 = f"{path_to_output}/{name_ch1}_{slideID}_{fov_name}.tiff" 
+
+            ch_idxs = [i for i in range(n_channels)] # retrieve channel indexs
+            ch_names = [metadata_dw[f'Channel Name (ch {int(i)})'].replace(" ", "") for i in range(n_channels)]     # retrieve channel names
+            ch_lambdas_em = [metadata_dw[f"Dye Emission wavelength (nm) (ch {int(i)})"] for i in range(n_channels)] # retrieve channel lambda emissions
+            output_ch_list = [f"{path_to_output}/{name_ch}_{slideID}_{fov_name}.tiff" for name_ch in ch_names]      # construct output names
+            
+            NA, ni = metadata_dw["objective NA"], metadata_dw["ni oil"]
+            dxy, dz = metadata_dw["Pixel size x (nm)"], metadata_dw["Pixel size z (nm)"]
             
             # perform conversion from property format to tiff 
             preprocessing_functions.conversion(
-                        path_to_image = path_to_image, slideID = slideID, imageID = imageID,
-                        fov_name = fov_name, path_to_output = path_to_output,
-                        output_ch0 = output_ch0, output_ch1 = output_ch1)       
+                                path_to_image = path_to_image,
+                                slideID = slideID,
+                                imageID = imageID,
+                                fov_name = fov_name,
+                                path_to_output = path_to_output,
+                                output_ch_list = output_ch_list
+                            )       
 
             # perform PSF estimation and deconvolution
             preprocessing_functions.deconvolution(
-                        slideID = slideID, imageID = imageID,
-                        fov_name = fov_name, path_to_output = path_to_output,
-                        output_ch0 = output_ch0, output_ch1 = output_ch1,
-                        threads = threads, dw_iterations = dw_iterations,
-                        NA = NA, e_ch0 = e_ch0, e_ch1 = e_ch1,
-                        ni = ni, dxy = dxy, dz = dz)  
+                                slideID = slideID,
+                                imageID = imageID,
+                                fov_name = fov_name, 
+                                path_to_output = path_to_output,
+                                output_ch_list = output_ch_list,
+                                threads = threads, 
+                                dw_iterations = dw_iterations,
+                                NA = NA, 
+                                ch_lambdas_em = ch_lambdas_em,
+                                ni = ni, 
+                                dxy = dxy, 
+                                dz = dz
+                            )  
 
+                            
     if n_fields==1: 
 
         fov_name = imageID.split("_")[-1].split(".")[0]
         if fov_name==slideID: 
-            raise Exception("file name is not following the agreed guidelines! It should contain a progressive number for the FOV SLIDEID_FOVindx.nd2/czi")
+            raise Exception("file name is not following the agreed guidelines! It should contain a progressive number for the FOV ...<SLIDEID>_<FOVindx>.<format>")
 
-        name_ch0 = metadata_dw['Channel Name (ch 0)'].replace(" ", "")
-        name_ch1 = metadata_dw['Channel Name (ch 1)'].replace(" ", "")
+        ch_idxs = [i for i in range(n_channels)] # retrieve channel indexs
+        ch_names = [metadata_dw[f'Channel Name (ch {int(i)})'].replace(" ", "") for i in range(n_channels)]     # retrieve channel names
+        ch_lambdas_em = [metadata_dw[f"Dye Emission wavelength (nm) (ch {int(i)})"] for i in range(n_channels)] # retrieve channel lambda emissions
+        output_ch_list = [f"{path_to_output}/{name_ch}_{slideID}_{fov_name}.tiff" for name_ch in ch_names]      # construct output names
+        
         NA, ni = metadata_dw["objective NA"], metadata_dw["ni oil"]
-        e_ch0, e_ch1 = metadata_dw["Dye Emission wavelength (nm) (ch 0)"], metadata_dw["Dye Emission wavelength (nm) (ch 1)"]
         dxy, dz = metadata_dw["Pixel size x (nm)"], metadata_dw["Pixel size z (nm)"]
-
- 
-        output_ch0 = f"{path_to_output}/{name_ch0}_{slideID}_{fov_name}.tiff"  
-        output_ch1 = f"{path_to_output}/{name_ch1}_{slideID}_{fov_name}.tiff"  
-
+        
         # perform conversion from property format to tiff 
         preprocessing_functions.conversion(
-                    path_to_image = path_to_image, slideID = slideID, imageID = imageID,
-                    fov_name = fov_name, path_to_output = path_to_output,
-                    output_ch0 = output_ch0, output_ch1 = output_ch1)       
+                            path_to_image = path_to_image,
+                            slideID = slideID,
+                            imageID = imageID,
+                            fov_name = fov_name,
+                            path_to_output = path_to_output,
+                            output_ch_list = output_ch_list
+                        )       
 
         # perform PSF estimation and deconvolution
         preprocessing_functions.deconvolution(
-                    slideID = slideID, imageID = imageID,
-                    fov_name = fov_name, path_to_output = path_to_output,
-                    output_ch0 = output_ch0, output_ch1 = output_ch1,
-                    threads = threads, dw_iterations = dw_iterations,
-                    NA = NA, e_ch0 = e_ch0, e_ch1 = e_ch1,
-                    ni = ni, dxy = dxy, dz = dz)  
+                            slideID = slideID,
+                            imageID = imageID,
+                            fov_name = fov_name, 
+                            path_to_output = path_to_output,
+                            output_ch_list = output_ch_list,
+                            threads = threads, 
+                            dw_iterations = dw_iterations,
+                            NA = NA, 
+                            ch_lambdas_em = ch_lambdas_em,
+                            ni = ni, 
+                            dxy = dxy, 
+                            dz = dz
+                        ) 
 
+        
 logging.info(" ---------")
