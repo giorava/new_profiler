@@ -1,5 +1,4 @@
 import numpy as np 
-from cellpose import models
 import skimage
 import scipy
 import pandas as pd
@@ -23,10 +22,13 @@ logging.basicConfig(level=logging.INFO)
 
 class DapiSegmentation(): 
 
-    def __init__(self, image_folder: str, dapi_channel_name: str):
+    def __init__(self, image_folder: str, dapi_channel_name: str,
+                       sigma_gaussian: float = 0.5, gamma_adjust: float = 1):
 
         self.image_folder = image_folder
         self.dapi_ch_name = dapi_channel_name
+        self.sigma_gaussian = sigma_gaussian
+        self.gamma_adjust = gamma_adjust
         return None
 
 
@@ -73,22 +75,41 @@ class DapiSegmentation():
         stack_image_dapi = image_dapi_obj.asarray()
         image_dapi_obj.close()
 
-        ##################################################################  
-        ####### Performing segmentation with CellPose nuclei NN ##########
-        ##################################################################
+        # apply gaussian filtering 
+        logging.info(" Gaussian filtering") 
+        gaus_filt = filters.gaussian(stack_image_dapi, 
+                                    sigma = self.sigma_gaussian)
 
-        model = models.Cellpose(gpu=True, model_type='nuclei')
+        logging.info(" Adjust intesity")
+        gamma_adjusted = exposure.adjust_gamma(gaus_filt,
+                                    gamma = self.gamma_adjust)
 
-        logging.info(f"Starting Mask file generation")
-        labels, flows, styles, diams = model.eval(stack_image_dapi, 
-                                                  diameter=None,
-                                                  channels=[0,0],
-                                                  do_3D=True)
+        logging.info(" High pass filters")
+        high_pass = filters.butterworth(gamma_adjusted, high_pass = True)
 
-        ##################################################################
+        logging.info(" Otsu filtering") 
+        otsu_thresholded = high_pass > filters.threshold_otsu(high_pass)
+
+        logging.info(" Remove small objects")
+        otsu_thresholded = morphology.remove_small_objects(otsu_thresholded, 20) 
+
+        logging.info(" Regularization step")
+        otsu_thresholded = morphology.binary_erosion(otsu_thresholded)
+        otsu_thresholded = morphology.binary_dilation(otsu_thresholded)
+
+        logging.info(" Label objects")
+        labels = measure.label(otsu_thresholded, connectivity = 2)
 
         logging.info(" Clear borders") 
         clean_labels = self.clean_xy_borders(labels)
+        otsu_thresholded = clean_labels.copy()
+        otsu_thresholded[otsu_thresholded!=0] = 1
+
+        logging.info(" Fill holes") 
+        otsu_thresholded = ndi.morphology.binary_fill_holes(otsu_thresholded)
+
+        logging.info(" Aftercleaning objects labeling")
+        clean_labels = measure.label(otsu_thresholded, connectivity = 2)
 
         return  clean_labels
 
@@ -119,4 +140,3 @@ class DapiSegmentation():
 
             otput_mask_name = f"mask.{dapi_file.split('_')[-1]}"
             tifffile.imwrite(f"{self.image_folder}/masks/{otput_mask_name}", labels_FOV_upd)
-
