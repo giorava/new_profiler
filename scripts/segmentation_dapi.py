@@ -33,7 +33,8 @@ class DapiSegmentation():
     def find_FOVs_list(self): 
         
         # select only dapi channel 
-        dapi_tiffs = [f for f in os.listdir(self.image_folder) if re.match(f"{self.dapi_ch_name}+.*\.tiff", f)]
+        #dapi_tiffs = [f for f in os.listdir(self.image_folder) if re.match(f"{self.dapi_ch_name}+.*\.tiff", f)]
+        dapi_tiffs = [f for f in os.listdir(self.image_folder) if re.match(f"dw_{self.dapi_ch_name}+.*\.tiff", f)]
         
         # extract the FOV idx (must be the last one)
         fov_list = np.array([(i, i.split("_")[-1].split(".")[0]) for i in dapi_tiffs])
