@@ -12,7 +12,8 @@ def conversion(path_to_image:str,
                 imageID:str,
                 fov_name:str,
                 path_to_output:str,
-                output_ch_list:list[str]) -> None:    
+                output_ch_list:"list[str]", 
+                fov_index = None) -> None:    
 
     """
     Conversion of customary images to tiff images using bfconvert
@@ -22,9 +23,14 @@ def conversion(path_to_image:str,
     with open(f"{path_to_output}/conversion_{slideID}_{fov_name}.log", "w") as f: 
 
         # create list of commands for conversion of each channel
-        conv_pipe = []
-        for index, output in enumerate(output_ch_list):
-            conv_pipe.append(f"bfconvert -channel {index} {path_to_image} '{output}'")
+        if fov_index == None: 
+            conv_pipe = []
+            for index, output in enumerate(output_ch_list):
+                conv_pipe.append(f"bfconvert -channel {index} {path_to_image} '{output}'")
+        else: 
+            conv_pipe = []
+            for index, output in enumerate(output_ch_list):
+                conv_pipe.append(f"bfconvert -series {fov_index} -channel {index} {path_to_image} '{output}'")
 
         # splitting the command and performing the conversion
         splitted = [shlex.split(i) for i in conv_pipe]
