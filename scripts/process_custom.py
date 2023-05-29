@@ -99,7 +99,8 @@ for imageID, slideID, imageFORM in list_of_slides:
                                 imageID = imageID,
                                 fov_name = fov_name,
                                 path_to_output = path_to_output,
-                                output_ch_list = output_ch_list
+                                output_ch_list = output_ch_list, 
+                                fov_index = fov_idx
                             )       
 
             # perform PSF estimation and deconvolution

@@ -23,10 +23,13 @@ logging.basicConfig(level=logging.INFO)
 
 class DapiSegmentation(): 
 
-    def __init__(self, image_folder: str, dapi_channel_name: str):
+    def __init__(self, image_folder: str, dapi_channel_name: str, 
+                 dx: float, dy: float, dz: float, nuclei_dimension: int):
 
         self.image_folder = image_folder
         self.dapi_ch_name = dapi_channel_name
+        self.anisotropy_idx = dz/dx
+        self.nuclei_dimension = nuclei_dimension
         return None
 
 
@@ -82,7 +85,8 @@ class DapiSegmentation():
 
         logging.info(f"Starting Mask file generation")
         labels, flows, styles, diams = model.eval(stack_image_dapi, 
-                                                  diameter=None,
+                                                  diameter=self.nuclei_dimension,
+                                                  anisotropy=self.anisotropy_idx,
                                                   channels=[0,0],
                                                   do_3D=True)
 
@@ -112,8 +116,13 @@ class DapiSegmentation():
             labels_FOV = self.segmentation_single_image(image_path)
             nuclei_labels = np.unique(labels_FOV[labels_FOV!=0])
 
+            for new_index, current_index in enumerate(nuclei_labels, 1): 
+                labels_FOV[labels_FOV==current_index] = new_index 
+
             labels_FOV_upd = labels_FOV.copy()
             labels_FOV_upd[labels_FOV_upd!=0] += number_of_nuclei
+
+            logging.info(f" nuclei indexes {np.unique(labels_FOV_upd)}")
 
             number_of_nuclei += len(nuclei_labels)
             nuclei_count.append(len(nuclei_labels))
