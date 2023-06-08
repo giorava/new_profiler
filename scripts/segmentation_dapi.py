@@ -20,24 +20,33 @@ from scipy.optimize import curve_fit
 import logging
 logging.basicConfig(level=logging.INFO)
 
+import matplotlib.pyplot as plt
+
 
 class DapiSegmentation(): 
 
     def __init__(self, image_folder: str, dapi_channel_name: str, 
-                 dx: float, dy: float, dz: float, nuclei_dimension: int):
+                 dx: float, dy: float, dz: float, nuclei_dimension: int,
+                 use_dw_dapi: str):
 
         self.image_folder = image_folder
         self.dapi_ch_name = dapi_channel_name
         self.anisotropy_idx = dz/dx
         self.nuclei_dimension = nuclei_dimension
+        self.use_dw_dapi = use_dw_dapi
         return None
 
 
     def find_FOVs_list(self): 
         
         # select only dapi channel 
-        #dapi_tiffs = [f for f in os.listdir(self.image_folder) if re.match(f"{self.dapi_ch_name}+.*\.tiff", f)]
-        dapi_tiffs = [f for f in os.listdir(self.image_folder) if re.match(f"dw_{self.dapi_ch_name}+.*\.tiff", f)]
+        logging.info(f"{self.use_dw_dapi}, {type(self.use_dw_dapi)}")
+        if (self.use_dw_dapi == "True")|(self.use_dw_dapi == "true"):
+            dapi_tiffs = [f for f in os.listdir(self.image_folder) if re.match(f"dw_{self.dapi_ch_name}+.*\.tiff", f)]
+        elif (self.use_dw_dapi == "False")|(self.use_dw_dapi == "false"): 
+            dapi_tiffs = [f for f in os.listdir(self.image_folder) if re.match(f"{self.dapi_ch_name}+.*\.tiff", f)]
+        else: 
+            raise Exception("Please set the use_dw_dapi option correctly")
         
         # extract the FOV idx (must be the last one)
         fov_list = np.array([(i, i.split("_")[-1].split(".")[0]) for i in dapi_tiffs])
@@ -81,7 +90,7 @@ class DapiSegmentation():
         ####### Performing segmentation with CellPose nuclei NN ##########
         ##################################################################
 
-        model = models.Cellpose(gpu=True, model_type='nuclei')
+        model = models.Cellpose(gpu=False, model_type='nuclei')
 
         logging.info(f"Starting Mask file generation")
         labels, flows, styles, diams = model.eval(stack_image_dapi, 
@@ -111,9 +120,13 @@ class DapiSegmentation():
 
         number_of_nuclei = 0
         nuclei_count = []
+
+        ## parallelize this
         for dapi_file in sorted_fileds: 
             image_path = f"{self.image_folder}/{dapi_file}"
             labels_FOV = self.segmentation_single_image(image_path)
+            plt.imshow(labels_FOV[labels_FOV.shape[0]//2, :, :])
+            plt.savefig(f"{self.image_folder}/FOV_plots/mask_{dapi_file}.png")
             nuclei_labels = np.unique(labels_FOV[labels_FOV!=0])
 
             for new_index, current_index in enumerate(nuclei_labels, 1): 

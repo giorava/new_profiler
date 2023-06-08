@@ -7,6 +7,7 @@ import extract_metadata
 import subprocess, shlex
 import preprocessing_functions
 import warnings
+from multiprocessing import *
 
 logging.basicConfig(level=logging.INFO)
 
@@ -91,33 +92,34 @@ for imageID, slideID, imageFORM in list_of_slides:
             
             NA, ni = metadata_dw["objective NA"], metadata_dw["ni oil"]
             dxy, dz = metadata_dw["Pixel size x (nm)"], metadata_dw["Pixel size z (nm)"]
-            
-            # perform conversion from property format to tiff 
-            preprocessing_functions.conversion(
-                                path_to_image = path_to_image,
-                                slideID = slideID,
-                                imageID = imageID,
-                                fov_name = fov_name,
-                                path_to_output = path_to_output,
-                                output_ch_list = output_ch_list, 
-                                fov_index = fov_idx
-                            )       
 
-            # perform PSF estimation and deconvolution
-            preprocessing_functions.deconvolution(
-                                slideID = slideID,
-                                imageID = imageID,
-                                fov_name = fov_name, 
-                                path_to_output = path_to_output,
-                                output_ch_list = output_ch_list,
-                                threads = threads, 
-                                dw_iterations = dw_iterations,
-                                NA = NA, 
-                                ch_lambdas_em = ch_lambdas_em,
-                                ni = ni, 
-                                dxy = dxy, 
-                                dz = dz
-                            )  
+            kwargs_conversion = {
+                "path_to_image":path_to_image,
+                "slideID":slideID,
+                "imageID":imageID,
+                "fov_name":fov_name,
+                "path_to_output":path_to_output,
+                "output_ch_list":output_ch_list, 
+                "fov_index":fov_idx
+            }
+
+            kwargs_deconvolution = {                                
+                "slideID":slideID,
+                "imageID":imageID,
+                "fov_name":fov_name, 
+                "path_to_output":path_to_output,
+                "output_ch_list":output_ch_list,
+                "threads":threads, 
+                "dw_iterations":dw_iterations,
+                "NA":NA, 
+                "ch_lambdas_em":ch_lambdas_em,
+                "ni":ni, 
+                "dxy":dxy, 
+                "dz":dz
+            }
+
+            preprocessing_functions.conversion(**kwargs_conversion)
+            preprocessing_functions.deconvolution(**kwargs_deconvolution)
 
                             
     if n_fields==1: 
@@ -133,32 +135,33 @@ for imageID, slideID, imageFORM in list_of_slides:
         
         NA, ni = metadata_dw["objective NA"], metadata_dw["ni oil"]
         dxy, dz = metadata_dw["Pixel size x (nm)"], metadata_dw["Pixel size z (nm)"]
-        
-        # perform conversion from property format to tiff 
-        preprocessing_functions.conversion(
-                            path_to_image = path_to_image,
-                            slideID = slideID,
-                            imageID = imageID,
-                            fov_name = fov_name,
-                            path_to_output = path_to_output,
-                            output_ch_list = output_ch_list
-                        )       
 
-        # perform PSF estimation and deconvolution
-        preprocessing_functions.deconvolution(
-                            slideID = slideID,
-                            imageID = imageID,
-                            fov_name = fov_name, 
-                            path_to_output = path_to_output,
-                            output_ch_list = output_ch_list,
-                            threads = threads, 
-                            dw_iterations = dw_iterations,
-                            NA = NA, 
-                            ch_lambdas_em = ch_lambdas_em,
-                            ni = ni, 
-                            dxy = dxy, 
-                            dz = dz
-                        ) 
-
+        kwargs_conversion = {
+                "path_to_image":path_to_image,
+                "slideID":slideID,
+                "imageID":imageID,
+                "fov_name":fov_name,
+                "path_to_output":path_to_output,
+                "output_ch_list":output_ch_list
+            }
         
+        kwargs_deconvolution = {                                
+                "slideID":slideID,
+                "imageID":imageID,
+                "fov_name":fov_name, 
+                "path_to_output":path_to_output,
+                "output_ch_list":output_ch_list,
+                "threads":threads, 
+                "dw_iterations":dw_iterations,
+                "NA":NA, 
+                "ch_lambdas_em":ch_lambdas_em,
+                "ni":ni, 
+                "dxy":dxy, 
+                "dz":dz
+            }
+        
+        preprocessing_functions.conversion(**kwargs_conversion)
+        preprocessing_functions.deconvolution(**kwargs_deconvolution)
+    
+
 logging.info(" ---------")

@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # compute nuclear statistics and save in nuclei_stats.tsv
     nuc_stats = pofiler.nuclear_stats()
 
-    output_stats = f"{output_folder}/nuclei_stats.tsv"
+    output_stats = f"{output_folder}/nuclei_stats_{args.fluorescence_ch_name}.tsv"
     if not(os.path.exists(output_stats)):
         nuc_stats.to_csv(output_stats, sep = "\t")
     else: 

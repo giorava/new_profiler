@@ -17,6 +17,8 @@ if __name__ == "__main__":
                         help = "axial dimension of the pizel (nm)")
     parser.add_argument('--estimated_nuc_diameter', type = str, 
                         help = "estimate diameter of nuclei in pixels")
+    parser.add_argument('--use_dw_dapi', type = str, 
+                        help = "whether or not to use dw dapi for deconvolution (default False)")
     args = parser.parse_args()
 
     logging.info(f" PROCESSING {args.image_folder}")
@@ -24,7 +26,8 @@ if __name__ == "__main__":
         image_folder = args.image_folder, 
         dapi_channel_name = args.dapi_channel_name, 
         dx = float(args.dx), dy = float(args.dy), dz = float(args.dz), 
-        nuclei_dimension = int(args.estimated_nuc_diameter)
+        nuclei_dimension = int(args.estimated_nuc_diameter),
+        use_dw_dapi = args.use_dw_dapi
     )
     seg_obj.run_folder()
 

@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=test
+#SBATCH --job-name=hin
 #SBATCH --partition=cpuq
 #SBATCH --time=3:00:00
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=10                                       ### equal to the number of threads
 #SBATCH --mem-per-cpu=10000
-#SBATCH --output=preprocessing_IC006.log                           ### modify
+#SBATCH --output=preprocessing_hin.log                           ### modify
 
 # Load Modules and set env variables
 eval "$(conda shell.bash hook)"
@@ -16,7 +16,7 @@ PATH=$PATH:/group/bienko/shared/deconwolf-dev/deconwolf-dev/bin
 PATH=$PATH:/group/bienko/shared/TOOLS/bftools
 
 ### modify
-path_to_raw="/scratch/giorgio.ravanelli/test_new_profile/BICRO_IC_006"    ### modify
+path_to_raw="/scratch/giorgio.ravanelli/test_new_profile/hin"             ### modify
 dw_iterations=15                                                          ### modify 
 threads=10                                                                ### modify
 

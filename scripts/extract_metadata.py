@@ -46,6 +46,8 @@ class metadata_reader():
         
         if self.img_array_czi.shape[self.img_obj_czi.axes.index("T")] > 1: 
             raise Exception('Conversion for live cell imaging not implemented') 
+        
+        self.img_obj_czi.close()
             
     
     def ND2(self, path_to_nd2: str) -> None: 
@@ -86,6 +88,7 @@ class metadata_reader():
             
         self.metadata_nd2 = self.img_obj_nd2.metadata
         
+        self.img_obj_nd2.close()
         
     @property
     def get_img_name_czi(self): 
