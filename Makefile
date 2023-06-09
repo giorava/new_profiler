@@ -1,6 +1,9 @@
 include *.config
 export
 
+interactive_session: 
+	srun --nodes=1 --mem=30GB --tasks-per-node=1 --partition=cpu-interactive --pty /bin/bash
+
 install_python_dependencies: profiler.yml
 	conda env create -f profiler.yml
 
@@ -16,17 +19,20 @@ run_preprocessing:
 	echo ">>> submitting PREPROCESSING ${expID} <<<"       
 	sbatch \
 		--partition=cpuq \
-		--array=0-$((${number_of_images}-1)) \
+		--array=0-$$(( ${number_of_images}-1 )) \
 		--cpus-per-task=${threads} \
 		--mem=${memory_per_image} \
 		--job-name="pre${expID}" \
 		--time=${preprocessing_estimated_time} \
 		--export=path_raw_folder=${path_raw_folder},dw_iterations=${dw_iterations},threads=${threads},path_raw_folder=${path_raw_folder} \
-		scripts/preprocessing_cluster.sh
+		scripts/preprocessing.sh
     
 after_preproc_cleaning: 
 	bash scripts/after_preproc_cleaning.sh --path_raw_folder ${path_raw_folder} 
 
+plot_fovs: 
+	bash scripts/plot_fovs.sh --path_raw_folder ${path_raw_folder} --channel_name ${dapi_channel_name} 
+	bash scripts/plot_fovs.sh --path_raw_folder ${path_raw_folder} --channel_name ${yfish_channel_name} 
 
 run_segmentation: 
 	echo ">>> submitting SEGMENTATION ${expID} <<<"       

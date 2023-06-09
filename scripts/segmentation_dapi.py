@@ -48,6 +48,9 @@ class DapiSegmentation():
         else: 
             raise Exception("Please set the use_dw_dapi option correctly")
         
+        if len(dapi_tiffs)==0: 
+            raise Exception("Found 0 dapi images! please check the dapi channel name in the .config file")
+        
         # extract the FOV idx (must be the last one)
         fov_list = np.array([(i, i.split("_")[-1].split(".")[0]) for i in dapi_tiffs])
 

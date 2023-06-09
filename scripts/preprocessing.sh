@@ -25,5 +25,4 @@ python scripts/run_process_custom.py \
     --path_raw_image "${path_raw_image}" \
     --dw_iterations "${dw_iterations}" \
     --threads "${threads}"
-
-bash after_preproc_cleaning.sh
+    
