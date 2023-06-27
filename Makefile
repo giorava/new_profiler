@@ -1,19 +1,21 @@
 include *.config
 export
 
+path_bin="$(shell pwd)/bin"
+
 interactive_session: 
-	srun --nodes=1 --mem=30GB --tasks-per-node=1 --partition=cpu-interactive --pty /bin/bash
+	srun --nodes=1 --mem=30GB --tasks-per-node=1 --partition=cpu-interactive --pty /bin/bash 
 
 install_python_dependencies: profiler.yml
 	conda env create -f profiler.yml
-
-check_external_dependencies: 
-	echo "to be implemented for deconwolved and bfconvert"
 
 copy_raw_data: 
 	bash scripts/copy_raw_data.sh \
 		--source_raw_folder_path ${source_raw_folder_path} \
 		--path_raw_folder ${path_raw_folder}
+
+show_metadata: 
+	python scripts/display_metadata.py --path_to_raw ${path_raw_folder}
 
 run_preprocessing: 
 	echo ">>> submitting PREPROCESSING ${expID} <<<"       
@@ -24,7 +26,7 @@ run_preprocessing:
 		--mem=${memory_per_image} \
 		--job-name="pre${expID}" \
 		--time=${preprocessing_estimated_time} \
-		--export=path_raw_folder=${path_raw_folder},dw_iterations=${dw_iterations},threads=${threads},path_raw_folder=${path_raw_folder} \
+		--export=path_bin=$(path_bin),path_raw_folder=${path_raw_folder},dw_iterations=${dw_iterations},threads=${threads},path_raw_folder=${path_raw_folder},perform_decolvolution=${perform_decolvolution} \
 		scripts/preprocessing.sh
     
 after_preproc_cleaning: 
@@ -33,6 +35,18 @@ after_preproc_cleaning:
 plot_fovs: 
 	bash scripts/plot_fovs.sh --path_raw_folder ${path_raw_folder} --channel_name ${dapi_channel_name} 
 	bash scripts/plot_fovs.sh --path_raw_folder ${path_raw_folder} --channel_name ${yfish_channel_name} 
+
+# run_segmentation: 
+# 	echo ">>> submitting SEGMENTATION ${expID} <<<"       
+# 	sbatch \
+# 		--partition=gpuq  \
+# 		--gres=gpu:1 \
+# 		--cpus-per-gpu=${threads} \
+# 		--mem=${memory_per_image} \
+# 		--job-name="s${expID}" \
+# 		--time="${segmentation_estimated_time}" \
+# 		--export=path_raw_folder="${path_raw_folder}",dapi_channel_name="${dapi_channel_name}",pixel_dx="${pixel_dx}",pixel_dy="${pixel_dy}",pixel_dz="${pixel_dz}",estimated_nuc_diameter="${estimated_nuc_diameter}",use_dw_dapi="${use_dw_dapi}" \
+# 		scripts/segmentation.sh
 
 run_segmentation: 
 	echo ">>> submitting SEGMENTATION ${expID} <<<"       
@@ -52,9 +66,12 @@ run_profile:
 		--mem=36GB \
 		--job-name="p${expID}" \
 		--time="${segmentation_estimated_time}" \
-		--export=path_raw_folder="${path_raw_folder}",dapi_channel_name="${dapi_channel_name}",yfish_channel_name="${yfish_channel_name}",pixel_dx="${pixel_dx}",pixel_dy="${pixel_dy}",pixel_dz="${pixel_dz}" \
+		--export=expID=${expID},path_raw_folder="${path_raw_folder}",dapi_channel_name="${dapi_channel_name}",yfish_channel_name="${yfish_channel_name}",pixel_dx="${pixel_dx}",pixel_dy="${pixel_dy}",pixel_dz="${pixel_dz}" \
 		scripts/profiles.sh
 
 after_run_cleaning:
-	bash scripts/after_run_cleaningsh --path_raw_folder ${path_raw_folder} 
+	bash scripts/after_run_cleaning.sh --path_raw_folder ${path_raw_folder} 
 	mv *.log "${path_raw_folder}"
+
+plot_profiles: 
+	python scripts/profile_plots.py --path_raw_folder ${path_raw_folder}

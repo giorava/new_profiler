@@ -93,7 +93,19 @@ class DapiSegmentation():
         ####### Performing segmentation with CellPose nuclei NN ##########
         ##################################################################
 
-        model = models.Cellpose(gpu=False, model_type='nuclei')
+        # model = models.Cellpose(gpu=False, model_type='nuclei')
+
+        # norm_stack_dapi = stack_image_dapi/(np.max(stack_image_dapi)*1.3)
+
+        # logging.info(f"Starting Mask file generation")
+        # labels, flows, styles, diams = model.eval(norm_stack_dapi, 
+        #                                           diameter=self.nuclei_dimension,
+        #                                           anisotropy=self.anisotropy_idx,
+        #                                           normalize = False,
+        #                                           channels=[0,0],
+        #                                           do_3D=True)
+        
+        model = models.Cellpose(gpu=True, model_type='cyto', net_avg=True)
 
         logging.info(f"Starting Mask file generation")
         labels, flows, styles, diams = model.eval(stack_image_dapi, 
@@ -102,7 +114,7 @@ class DapiSegmentation():
                                                   channels=[0,0],
                                                   do_3D=True)
 
-        ##################################################################
+        #################################################################
 
         logging.info(" Clear borders") 
         clean_labels = self.clean_xy_borders(labels)

@@ -13,11 +13,14 @@ if __name__ == "__main__":
                         help='Number of iterations')
     parser.add_argument('--threads', type=str,
                         help='number of threads')
+    parser.add_argument("--perform_decolvolution", type = str, 
+                        help="True if you want to perform the deconvolution, False otherwise")
     args = parser.parse_args()
 
     obj = process_custom_class.ProcessCustom(path_raw_image = args.path_raw_image, 
                                              dw_iterations = args.dw_iterations, 
-                                             threads = args.threads)
+                                             threads = args.threads, 
+                                             perform_decolvolution = args.perform_decolvolution)
     
     obj.run()
 

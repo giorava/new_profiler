@@ -11,11 +11,12 @@ from multiprocessing import *
 
 class ProcessCustom(): 
 
-    def __init__(self, path_raw_image: str, dw_iterations: str, threads: str):
+    def __init__(self, path_raw_image: str, dw_iterations: str, threads: str, perform_decolvolution: str):
         
         self.path_raw_image = path_raw_image
         self.dw_iterations = dw_iterations
         self.threads = threads
+        self.perform_decolvolution = perform_decolvolution
 
         # find file name and file path
         self.file_name = self.path_raw_image.split("/")[-1]
@@ -54,7 +55,7 @@ class ProcessCustom():
         # check the number of channels
         if self.n_channels != 2: 
             warnings.warn("The number of channel does not match the number of channels (YFISH,DAPI) \
-                          required for WFISH analysis. Only Preprocessing performed")
+                          required for YFISH analysis. Only Preprocessing performed")
             
 
     def conversion(self, path_to_image:str, slideID:str, imageID:str, fov_name:str,
@@ -154,14 +155,17 @@ class ProcessCustom():
                 }
 
                 self.conversion(**kwargs_conversion)
-                self.deconvolution(**kwargs_deconvolution)
+                
+                if self.perform_decolvolution == "True": 
+                    self.deconvolution(**kwargs_deconvolution)
 
                                 
         if self.n_fields==1: 
 
             fov_name = self.imageID.split("_")[-1].split(".")[0]
             if fov_name==self.slideID: 
-                raise Exception("file name is not following the agreed guidelines! It should contain a progressive number for the FOV ...<SLIDEID>_<FOVindx>.<format>")
+                warnings.warn("file name is not following the agreed guidelines! It should contain a progressive number for the FOV ...<SLIDEID>_<FOVindx>.<format>", DeprecationWarning)
+                fov_name="F1"
 
             ch_names = [self.metadata_dw[f'Channel Name (ch {int(i)})'].replace(" ", "") for i in range(self.n_channels)]     # retrieve channel names
             ch_lambdas_em = [self.metadata_dw[f"Dye Emission wavelength (nm) (ch {int(i)})"] for i in range(self.n_channels)] # retrieve channel lambda emissions
@@ -171,7 +175,7 @@ class ProcessCustom():
             dxy, dz = self.metadata_dw["Pixel size x (nm)"], self.metadata_dw["Pixel size z (nm)"]
 
             kwargs_conversion = {
-                    "path_to_image":self.path_to_image,
+                    "path_to_image":self.path_raw_image,
                     "slideID":self.slideID,
                     "imageID":self.imageID,
                     "fov_name":fov_name,
@@ -195,4 +199,5 @@ class ProcessCustom():
                 }
             
             self.conversion(**kwargs_conversion)
-            self.deconvolution(**kwargs_deconvolution)
+            if self.perform_decolvolution == "True": 
+                self.deconvolution(**kwargs_deconvolution)

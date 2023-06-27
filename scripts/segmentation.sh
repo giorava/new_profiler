@@ -15,6 +15,7 @@ do
     echo ">>>> Estimated nuclei pixel dimension ${estimated_nuc_diameter}"
     echo ">>>> Use dw dapi for masks: ${use_dw_dapi}"
 
+    mkdir -p "${folder}/FOV_plots"
     python scripts/run_segmentation.py \
         --image_folder "${folder}" \
         --dapi_channel_name "${dapi_channel_name}" \
