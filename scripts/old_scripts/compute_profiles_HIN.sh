@@ -1,20 +1,20 @@
 #!/bin/bash
-#SBATCH --job-name=test
+#SBATCH --job-name=hin
 #SBATCH --partition=cpuq
 #SBATCH --time=02:00:00
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=10
-#SBATCH --output=profiler_IC006.log
+#SBATCH --output=profiler_hin.log
 
 # load modules and set env_variables
 eval "$(conda shell.bash hook)"
 conda activate new_profiler
 
-path_to_raw="/scratch/giorgio.ravanelli/test_new_profile/BICRO_IC_006" 
-dapi_channel_name="DAPI" 
-yfish_channel_name="CY5"
-dx_nm="284.0"
-dy_nm="284.0"
+path_to_raw="/scratch/giorgio.ravanelli/test_new_profile/hin" 
+dapi_channel_name="dapi" 
+yfish_channel_name="A594"
+dx_nm="65.0"
+dy_nm="65.0"
 dz_nm="300.0"
 
 # for each folder:

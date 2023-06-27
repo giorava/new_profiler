@@ -139,6 +139,10 @@ class ComputeProfiles():
                 else:
                     mean_intensity.loc[label].iloc[i-1] = np.nan
                     median_intesity.loc[label].iloc[i-1] = np.nan
-
-        return mean_intensity, median_intesity
         
+        mean_intensity.index.name = "nucleus_label"
+        median_intesity.index.name = "nucleus_label"         
+        return mean_intensity, median_intesity 
+ 
+    
+    
