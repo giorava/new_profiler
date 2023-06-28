@@ -1,4 +1,5 @@
-from extract_metadata import *
+from profiler_classes.extract_metadata import *
+import re
 
 if __name__ == "__main__": 
 
@@ -6,8 +7,13 @@ if __name__ == "__main__":
     parser.add_argument('--path_to_raw', type=str,
                         help='Absolute path to the raw folder')
     args = parser.parse_args()
-
-    absolute_paths_to_images = [f"{args.path_to_raw}/{i}" for i in os.listdir(args.path_to_raw)]
+    
+    absolute_paths_to_images = []
+    for i in os.listdir(args.path_to_raw): 
+        if re.search(".nd2", i): 
+            absolute_paths_to_images.append(f"{args.path_to_raw}/{i}")
+        elif re.search(".czi", i): 
+            absolute_paths_to_images.append(f"{args.path_to_raw}/{i}")
 
     for path in absolute_paths_to_images:
         basename = os.path.basename(path)

@@ -26,6 +26,7 @@ run_preprocessing:
 		--mem=${memory_per_image} \
 		--job-name="pre${expID}" \
 		--time=${preprocessing_estimated_time} \
+		--output=${path_raw_folder}/${expID}_preprocessing_%a.log \
 		--export=path_bin=$(path_bin),path_raw_folder=${path_raw_folder},dw_iterations=${dw_iterations},threads=${threads},path_raw_folder=${path_raw_folder},perform_decolvolution=${perform_decolvolution} \
 		scripts/preprocessing.sh
     
@@ -36,19 +37,20 @@ plot_fovs:
 	bash scripts/plot_fovs.sh --path_raw_folder ${path_raw_folder} --channel_name ${dapi_channel_name} 
 	bash scripts/plot_fovs.sh --path_raw_folder ${path_raw_folder} --channel_name ${yfish_channel_name} 
 
-# run_segmentation: 
-# 	echo ">>> submitting SEGMENTATION ${expID} <<<"       
-# 	sbatch \
-# 		--partition=gpuq  \
-# 		--gres=gpu:1 \
-# 		--cpus-per-gpu=${threads} \
-# 		--mem=${memory_per_image} \
-# 		--job-name="s${expID}" \
-# 		--time="${segmentation_estimated_time}" \
-# 		--export=path_raw_folder="${path_raw_folder}",dapi_channel_name="${dapi_channel_name}",pixel_dx="${pixel_dx}",pixel_dy="${pixel_dy}",pixel_dz="${pixel_dz}",estimated_nuc_diameter="${estimated_nuc_diameter}",use_dw_dapi="${use_dw_dapi}" \
-# 		scripts/segmentation.sh
+run_segmentation_GPU: 
+	echo ">>> submitting SEGMENTATION ${expID} <<<"       
+	sbatch \
+		--partition=gpuq  \
+		--gres=gpu:1 \
+		--cpus-per-gpu=${threads} \
+		--mem=${memory_per_image} \
+		--job-name="s${expID}" \
+		--time="${segmentation_estimated_time}" \
+		--output=${path_raw_folder}/${expID}_segmentation_GPU.log \
+		--export=path_raw_folder="${path_raw_folder}",dapi_channel_name="${dapi_channel_name}",pixel_dx="${pixel_dx}",pixel_dy="${pixel_dy}",pixel_dz="${pixel_dz}",estimated_nuc_diameter="${estimated_nuc_diameter}",use_dw_dapi="${use_dw_dapi}",standardize_image_for_seg="${standardize_image_for_seg}" \
+		scripts/segmentation.sh
 
-run_segmentation: 
+run_segmentation_CPU: 
 	echo ">>> submitting SEGMENTATION ${expID} <<<"       
 	sbatch \
 		--partition=cpuq  \
@@ -56,7 +58,8 @@ run_segmentation:
 		--mem=${memory_per_image} \
 		--job-name="s${expID}" \
 		--time="${segmentation_estimated_time}" \
-		--export=path_raw_folder="${path_raw_folder}",dapi_channel_name="${dapi_channel_name}",pixel_dx="${pixel_dx}",pixel_dy="${pixel_dy}",pixel_dz="${pixel_dz}",estimated_nuc_diameter="${estimated_nuc_diameter}",use_dw_dapi="${use_dw_dapi}" \
+		--output=${path_raw_folder}/${expID}_segmentation_CPU.log \
+		--export=path_raw_folder="${path_raw_folder}",dapi_channel_name="${dapi_channel_name}",pixel_dx="${pixel_dx}",pixel_dy="${pixel_dy}",pixel_dz="${pixel_dz}",estimated_nuc_diameter="${estimated_nuc_diameter}",use_dw_dapi="${use_dw_dapi},standardize_image_for_seg="${standardize_image_for_seg}"" \
 		scripts/segmentation.sh
 
 run_profile: 
@@ -66,6 +69,7 @@ run_profile:
 		--mem=36GB \
 		--job-name="p${expID}" \
 		--time="${segmentation_estimated_time}" \
+		--output=${path_raw_folder}/${expID}_profile.log \
 		--export=expID=${expID},path_raw_folder="${path_raw_folder}",dapi_channel_name="${dapi_channel_name}",yfish_channel_name="${yfish_channel_name}",pixel_dx="${pixel_dx}",pixel_dy="${pixel_dy}",pixel_dz="${pixel_dz}" \
 		scripts/profiles.sh
 
@@ -73,5 +77,3 @@ after_run_cleaning:
 	bash scripts/after_run_cleaning.sh --path_raw_folder ${path_raw_folder} 
 	mv *.log "${path_raw_folder}"
 
-plot_profiles: 
-	python scripts/profile_plots.py --path_raw_folder ${path_raw_folder}
