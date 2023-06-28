@@ -1,4 +1,4 @@
-import segmentation_dapi
+from scripts.profiler_classes.segmentation_dapi import *
 import argparse
 import logging
 
@@ -19,15 +19,18 @@ if __name__ == "__main__":
                         help = "estimate diameter of nuclei in pixels")
     parser.add_argument('--use_dw_dapi', type = str, 
                         help = "whether or not to use dw dapi for deconvolution (default False)")
+    parser.add_argument('--standardize_image_for_seg', type = str, 
+                        help = "whether or not to standardize the image for segmentation (default False)")
     args = parser.parse_args()
 
     logging.info(f" PROCESSING {args.image_folder}")
-    seg_obj = segmentation_dapi.DapiSegmentation(
+    seg_obj = DapiSegmentation(
         image_folder = args.image_folder, 
         dapi_channel_name = args.dapi_channel_name, 
         dx = float(args.dx), dy = float(args.dy), dz = float(args.dz), 
         nuclei_dimension = int(args.estimated_nuc_diameter),
-        use_dw_dapi = args.use_dw_dapi
+        use_dw_dapi = args.use_dw_dapi,
+        standardize_image_for_seg = args.standardize_image_for_seg
     )
     seg_obj.run_folder()
 

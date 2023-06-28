@@ -5,7 +5,7 @@ import scipy
 import pandas as pd
 import math
 import tifffile
-import os
+import os, warnings
 import cv2
 import re
 from skimage.filters import sobel
@@ -27,13 +27,14 @@ class DapiSegmentation():
 
     def __init__(self, image_folder: str, dapi_channel_name: str, 
                  dx: float, dy: float, dz: float, nuclei_dimension: int,
-                 use_dw_dapi: str):
+                 use_dw_dapi: str, standardize_image_for_seg: str):
 
         self.image_folder = image_folder
         self.dapi_ch_name = dapi_channel_name
         self.anisotropy_idx = dz/dx
         self.nuclei_dimension = nuclei_dimension
         self.use_dw_dapi = use_dw_dapi
+        self.standardize_image_for_seg = standardize_image_for_seg
         return None
 
 
@@ -79,6 +80,10 @@ class DapiSegmentation():
             new_labels[new_labels==element] = 0
 
         return new_labels
+    
+    def radiantkit_segmentation(stack_image_dapi): 
+        # return the labels
+        pass
 
     def segmentation_single_image(self, dapi_tiff_image: str) -> np.ndarray: 
 
@@ -92,27 +97,34 @@ class DapiSegmentation():
         ##################################################################  
         ####### Performing segmentation with CellPose nuclei NN ##########
         ##################################################################
-
-        # model = models.Cellpose(gpu=False, model_type='nuclei')
-
-        # norm_stack_dapi = stack_image_dapi/(np.max(stack_image_dapi)*1.3)
-
-        # logging.info(f"Starting Mask file generation")
-        # labels, flows, styles, diams = model.eval(norm_stack_dapi, 
-        #                                           diameter=self.nuclei_dimension,
-        #                                           anisotropy=self.anisotropy_idx,
-        #                                           normalize = False,
-        #                                           channels=[0,0],
-        #                                           do_3D=True)
         
         model = models.Cellpose(gpu=True, model_type='cyto', net_avg=True)
-
-        logging.info(f"Starting Mask file generation")
-        labels, flows, styles, diams = model.eval(stack_image_dapi, 
-                                                  diameter=self.nuclei_dimension,
-                                                  anisotropy=self.anisotropy_idx,
-                                                  channels=[0,0],
-                                                  do_3D=True)
+        
+        if self.standardize_image_for_seg == "True": 
+            norm_stack_dapi = (stack_image_dapi-np.min(stack_image_dapi))/(np.max(stack_image_dapi)-np.min(stack_image_dapi))
+            labels, flows, styles, diams = model.eval(norm_stack_dapi, 
+                                                        diameter=self.nuclei_dimension,
+                                                        anisotropy=self.anisotropy_idx,
+                                                        normalize = False,
+                                                        channels=[0,0],
+                                                        do_3D=True)
+            
+        elif self.standardize_image_for_seg == "False":  
+            logging.info(f"Starting Mask file generation")
+            labels, flows, styles, diams = model.eval(stack_image_dapi, 
+                                                    diameter=self.nuclei_dimension,
+                                                    anisotropy=self.anisotropy_idx,
+                                                    channels=[0,0],
+                                                    do_3D=True)
+        else: 
+            warnings.warn("Double check standardize_image_for_seg option.. should be either 'True' or 'False'. \
+            Running with False")
+            logging.info(f"Starting Mask file generation")
+            labels, flows, styles, diams = model.eval(stack_image_dapi, 
+                                                    diameter=self.nuclei_dimension,
+                                                    anisotropy=self.anisotropy_idx,
+                                                    channels=[0,0],
+                                                    do_3D=True)
 
         #################################################################
 

@@ -1,6 +1,6 @@
 import argparse
 import logging
-import process_custom_class
+from scripts.profiler_classes.process_custom_class import *
 logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__": 
@@ -17,7 +17,7 @@ if __name__ == "__main__":
                         help="True if you want to perform the deconvolution, False otherwise")
     args = parser.parse_args()
 
-    obj = process_custom_class.ProcessCustom(path_raw_image = args.path_raw_image, 
+    obj = ProcessCustom(path_raw_image = args.path_raw_image, 
                                              dw_iterations = args.dw_iterations, 
                                              threads = args.threads, 
                                              perform_decolvolution = args.perform_decolvolution)

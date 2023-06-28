@@ -1,5 +1,4 @@
-#!/bin/bash
-#SBATCH --output=preprocessing_%a.log                        
+#!/bin/bash                     
 
 # Load Modules and set env variables
 eval "$(conda shell.bash hook)"

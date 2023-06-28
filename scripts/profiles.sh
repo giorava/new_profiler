@@ -1,5 +1,4 @@
 #!/bin/bash
-#SBATCH --output=profiles.log  
 
 eval "$(conda shell.bash hook)"
 conda activate new_profiler
