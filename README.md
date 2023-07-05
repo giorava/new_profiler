@@ -25,7 +25,7 @@ The output of the analysis is a series of .tsv files containing the profile outp
 To install the package it is enough to clone this repository and install the dependencies (assuming conda is installed in your HT environment): 
 ```
 conda env create -f profiler.yml
-export PATH=${PATH}:/${PATH_TO_PROFILER}
+export PATH=${PATH}:/${path_to_gui_folder}     ## can also add this to .bashrc
 ```
 If you are not using the HT cluster please make sure that the binaries in /bin are working: 
 ```
@@ -54,7 +54,7 @@ To run the analysis using the GUI you have to follow the following preliminary s
     ```
 4. run the GUI
     ```
-    GUI_radiantkit
+    python GUI.py
     ```
 
 
