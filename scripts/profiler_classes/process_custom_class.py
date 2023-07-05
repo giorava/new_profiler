@@ -3,7 +3,7 @@ import argparse
 import logging
 import re
 import numpy as np
-import scripts.profiler_classes.extract_metadata as extract_metadata
+import profiler_classes.extract_metadata as extract_metadata
 import subprocess, shlex
 import warnings
 from multiprocessing import *

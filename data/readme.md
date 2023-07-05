@@ -1,2 +1,4 @@
-This is the location where all the data will be processed
-Please specify the source folder of the raw data in the config file
+If you are cloning this repo in scratch then you can use this data folder to process your data together with 
+```
+make copy_raw_data
+```

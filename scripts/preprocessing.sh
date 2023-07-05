@@ -12,8 +12,12 @@ declare -a paths_raw_image=()
 for path_raw_image in "${path_raw_folder}"/*
 do 
     if [[ -f ${path_raw_image} ]]; then 
-        #echo ${path_raw_image}
-        paths_raw_image+=( "${path_raw_image}" )
+        if [[ ${path_raw_image} == *.nd2 ]]; then 
+            paths_raw_image+=( "${path_raw_image}" )
+        fi
+        if [[ ${path_raw_image} == *.czi ]]; then 
+            paths_raw_image+=( "${path_raw_image}" )
+        fi
     fi
 done
 

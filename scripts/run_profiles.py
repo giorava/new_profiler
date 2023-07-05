@@ -1,4 +1,4 @@
-import scripts.profiler_classes.compute_profiles as compute_profiles
+import profiler_classes.compute_profiles as compute_profiles
 import argparse
 import logging
 import os
