@@ -37,32 +37,26 @@ you should see the help page of each dependency.
 
 ## Running with the GUI
 
-To run the analysis using the GUI you have to follow the following preliminary steps where HT_USER is your user name (name.surname): 
+To run the analysis using the GUI you have to follow the following preliminary steps where HT_USER is your user name: 
 
 1. log into the cluster using X11 forwarding:
-```
-  ${path_to_bin}/dw --help
-  ${path_to_bin}/dw_bw --help
-  ${path_to_bin}/bftools/bfconvert --help
-```
-3. start an interactive session with X11 forwarding:
-```
-  ${path_to_bin}/dw --help
-  ${path_to_bin}/dw_bw --help
-  ${path_to_bin}/bftools/bfconvert --help
-```
-5. got to the folder gui
-```
-  ${path_to_bin}/dw --help
-  ${path_to_bin}/dw_bw --help
-  ${path_to_bin}/bftools/bfconvert --help
-```
-7. run
-```
-  ${path_to_bin}/dw --help
-  ${path_to_bin}/dw_bw --help
-  ${path_to_bin}/bftools/bfconvert --help
-```
+    ```
+    ssh -YC ${HT_USER}@hpclogin.fht.org
+    ```
+2. start an interactive session with X11 forwarding:
+    ```
+    srun --nodes=1 --tasks-per-node=1 --x11 --mem=30GB --partition=cpu-interactive --pty /bin/bash
+    ```
+3. activate the profiler environment:
+    ```
+    conda activate new_profiler
+    ```
+4. got to the folder gui and run the gui
+    ```
+    ${path_to_bin}/dw --help
+    ${path_to_bin}/dw_bw --help
+    ${path_to_bin}/bftools/bfconvert --help
+    ```
 
 
 
