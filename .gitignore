@@ -1,0 +1,14 @@
+# Configuration files #
+###################
+*BICRO*.config
+
+# Data folder #
+###################
+data/*/
+plot_profiles/*/
+plot_profiles/*.png
+scripts/__pycache__
+gui/__pycache__
+test
+.vscode
+gui/*.ini

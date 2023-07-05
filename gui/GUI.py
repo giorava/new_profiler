@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import filedialog
 import os
@@ -62,6 +63,8 @@ class EnvironmentVariableGUI:
         self.save_button.grid(row=19, column=3)
         self.delete_button = tk.Button(self.config, text="Clear configuration", command=self.delate_config)
         self.delete_button.grid(row=20, column=3)
+        self.export_button = tk.Button(self.config, text="Export configuration", command=self.export_config)
+        self.export_button.grid(row=21, column=3)
         
         self.preprocessing_frame = tk.LabelFrame(self.root, text="Preprocessing")
         self.preprocessing_frame.grid(row=19, column=1, columnspan=1, sticky="ew", padx=10, pady=10)
@@ -85,7 +88,7 @@ class EnvironmentVariableGUI:
         self.preprocessing_button.grid(row=20, column=3) 
         
         self.raw_folder_path = ""
-        self.load_config()  
+        self.load_config()
         
     def show_advance_options(self, name, row): 
         label = tk.Label(self.advanced_frame, text=name)
@@ -136,6 +139,9 @@ class EnvironmentVariableGUI:
             
     def delate_config(self): 
         os.remove(self.config_file)   
+        
+    def export_config(self): 
+        os.rename(self.config_file, f"{self.raw_folder_path_entry.get()}/config.ini")
         
     def show_metadata(self): 
         print("\n>>>> Showing metadata")
@@ -267,6 +273,8 @@ class EnvironmentVariableGUI:
                     self.standardize_for_segmentation_entry.insert(0, variables['standardize_image_segmentation'])
                 
                 print("Config loaded successfully.")
+        else: 
+            print(f"No config present in {self.raw_folder_path_entry.get()}")
 
 
 # Create the main window
