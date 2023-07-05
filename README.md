@@ -52,11 +52,9 @@ To run the analysis using the GUI you have to follow the following preliminary s
     ```
     conda activate new_profiler
     ```
-4. got to the folder gui and run the gui
+4. run the GUI
     ```
-    ${path_to_bin}/dw --help
-    ${path_to_bin}/dw_bw --help
-    ${path_to_bin}/bftools/bfconvert --help
+    GUI_radiantkit
     ```
 
 
