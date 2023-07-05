@@ -65,11 +65,13 @@ The following window will appear:
 <img src="https://github.com/giorava/new_profiler/assets/107054086/db8e873b-91ea-4ae3-8371-aceb5692d245" width="900"></a>
 <figcaption>  
   <p align="center">
-    Figure 1. General workflow of the RadiantKit analysis. 
+    GUI window.
   </p>
 </figcaption>
 </p>
 </figure>
+
+After choosing the path of your raw images with "browse" you can complete the other fields with the help of "Show Metadata". Remember to save the configuration. 
 
 
 ## Running without the GUI
