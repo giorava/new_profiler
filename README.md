@@ -28,11 +28,43 @@ conda env create -f profiler.yml
 ```
 If you are not using the HT cluster please make sure that the binaries in /bin are working: 
 ```
-${path_to_bin}/dw
-${path_to_bin}/dw_bw
-${path_to_bin}/
+${path_to_bin}/dw --help
+${path_to_bin}/dw_bw --help
+${path_to_bin}/bftools/bfconvert --help
 ```
+you should see the help page of each dependency.
 
-## Running without GUI
 
 ## Running with the GUI
+
+To run the analysis using the GUI you have to follow the following preliminary steps where HT_USER is your user name (name.surname): 
+
+1. log into the cluster using X11 forwarding:
+```
+  ${path_to_bin}/dw --help
+  ${path_to_bin}/dw_bw --help
+  ${path_to_bin}/bftools/bfconvert --help
+```
+3. start an interactive session with X11 forwarding:
+```
+  ${path_to_bin}/dw --help
+  ${path_to_bin}/dw_bw --help
+  ${path_to_bin}/bftools/bfconvert --help
+```
+5. got to the folder gui
+```
+  ${path_to_bin}/dw --help
+  ${path_to_bin}/dw_bw --help
+  ${path_to_bin}/bftools/bfconvert --help
+```
+7. run
+```
+  ${path_to_bin}/dw --help
+  ${path_to_bin}/dw_bw --help
+  ${path_to_bin}/bftools/bfconvert --help
+```
+
+
+
+## Running without the GUI
+
