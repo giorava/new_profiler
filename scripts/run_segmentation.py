@@ -1,4 +1,4 @@
-from scripts.profiler_classes.segmentation_dapi import *
+from profiler_classes.segmentation_dapi import *
 import argparse
 import logging
 

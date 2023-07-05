@@ -1,6 +1,6 @@
 import argparse
 import logging
-from scripts.profiler_classes.process_custom_class import *
+from profiler_classes.process_custom_class import *
 logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__": 
