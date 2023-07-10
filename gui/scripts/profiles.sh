@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source ${HOME}/.bashrc
 eval "$(conda shell.bash hook)"
 conda activate new_profiler
 

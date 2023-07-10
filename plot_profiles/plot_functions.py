@@ -21,50 +21,6 @@ def load_data(paths, name_file):
     return dict_data
 
 
-def plot_nuc_stats_dist(nuclei_stats):
-
-    fig, axs = plt.subplots(2,3, figsize = (35, 20))
-    axs1, axs2 = axs[0], axs[1]
-    
-    axs1[1].set_title("Nuclei statistics \n", fontsize = 25)
-    seaborn.scatterplot(data=nuclei_stats, x="areas",
-                        y="integrated_intensity", ax = axs1[-1])
-    seaborn.kdeplot(data=nuclei_stats, x="areas", 
-                   fill=True, thresh=0.2, levels=100, ax = axs1[0])
-    seaborn.kdeplot(data=nuclei_stats, x="integrated_intensity", 
-                   fill=True, thresh=0.2, levels=100, ax = axs1[1])
-    
-    axs2[1].set_title("Log plot nuclei statistics \n", fontsize = 25)
-    seaborn.scatterplot(data=nuclei_stats, x="log10_area",
-                        y="log10_int_intensity", ax = axs2[-1])
-    seaborn.kdeplot(data=nuclei_stats, x="log10_area", 
-                   fill=True, thresh=0.2, levels=100, ax = axs2[0])
-    seaborn.kdeplot(data=nuclei_stats, x="log10_int_intensity", 
-                   fill=True, thresh=0.2, levels=100, ax = axs2[1])
-    
-    return fig
-
-
-def plot_nuclei_stats(dataset, dataset_key, filtering = False): 
-    
-    # extract from the dictionary
-    nuclei_stats_dapi = dataset[dataset_key]
-    
-    # computing log10 of area and intensity
-    nuclei_stats_dapi["log10_area"] = np.log10(nuclei_stats_dapi["areas"])
-    nuclei_stats_dapi["log10_int_intensity"] = np.log10(nuclei_stats_dapi["integrated_intensity"])
-
-    if filtering:
-        q10_area, q90_area = np.quantile(nuclei_stats_dapi["areas"], (0.1, 0.90)) 
-        small_deb_filt = (nuclei_stats_dapi["areas"]>q10_area)&(nuclei_stats_dapi["areas"]<q90_area)
-        nuclei_stats_dapi_filt = nuclei_stats_dapi[small_deb_filt]
-        fig = plot_nuc_stats_dist(nuclei_stats_dapi_filt)
-    else: 
-        fig = plot_nuc_stats_dist(nuclei_stats_dapi)
-        
-    return fig
-
-
 def clustering(data, key, plot = True): 
     
     # estimate the clusters
@@ -74,21 +30,16 @@ def clustering(data, key, plot = True):
     X = dataset[["log10_area", "log10_int_intensity"]]
     y_pred = KMeans(n_clusters=2, n_init = "auto").fit_predict(X)
     dataset["clusters"]=y_pred
-
-    # estimate the center of mass of the clusters
-    center_0 = np.array(X[y_pred==0].mean(axis = 0))
-    center_1 = np.array(X[y_pred==1].mean(axis = 0))
-        
-    # do some plotting of the results
+    
     if plot: 
         fig, axs = plt.subplots(1,3, figsize = (20, 5))
-        color_dict = {0:"tab:blue", 1:"tab:orange"}
+        color_dict = {0:"tab:blue", 1:"tab:orange", 2:"tab:green"}
         c_array = [color_dict[i] for i in y_pred]
         
         h = axs[0].scatter(X["log10_area"], X["log10_int_intensity"], c=c_array)
         axs[0].set_xlabel("log10_area")
         axs[0].set_ylabel("log10_int_intensity")
-            
+        
         seaborn.kdeplot(data=dataset, x="log10_area", fill=True,
                         ax = axs[1], hue = "clusters")
         seaborn.kdeplot(data=dataset, x="log10_int_intensity", fill=True,
@@ -96,8 +47,30 @@ def clustering(data, key, plot = True):
         
         plt.close()
         return fig, dataset
-    else: 
-        return dataset
+
+    # # estimate the center of mass of the clusters
+    # center_0 = np.array(X[y_pred==0].mean(axis = 0))
+    # center_1 = np.array(X[y_pred==1].mean(axis = 0))
+        
+    # # do some plotting of the results
+    # if plot: 
+    #     fig, axs = plt.subplots(1,3, figsize = (20, 5))
+    #     color_dict = {0:"tab:blue", 1:"tab:orange"}
+    #     c_array = [color_dict[i] for i in y_pred]
+        
+    #     h = axs[0].scatter(X["log10_area"], X["log10_int_intensity"], c=c_array)
+    #     axs[0].set_xlabel("log10_area")
+    #     axs[0].set_ylabel("log10_int_intensity")
+            
+    #     seaborn.kdeplot(data=dataset, x="log10_area", fill=True,
+    #                     ax = axs[1], hue = "clusters")
+    #     seaborn.kdeplot(data=dataset, x="log10_int_intensity", fill=True,
+    #                     ax = axs[2], hue = "clusters")
+        
+    #     plt.close()
+    #     return fig, dataset
+    # else: 
+    #     return dataset
     
     
 def find_nuc_ids(data, plot = True): 
