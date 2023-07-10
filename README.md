@@ -73,3 +73,10 @@ The following window will appear:
 </figure>
 
 After choosing the path of your raw images with `browse` you can complete the other fields with the help of `Show Metadata`. Remember to save the configuration. To submit the preprocessing just press `Submit preprocessing` and follow the submission in the command line. To check the status of the job press `Show queue`. After the preprocessing is completed clean the folders and plot the FOVs. Before proceeding with segmentation double check the nuclei diameter by looking at the FOV plots of dapi and change if necessary. Submit the segmentation with `Submit segmentation`. Analogously, after segmentation computes the profiles with `Submit profiler` and cleans the target folders with `After run cleaning` to have a nicely organized output. The output .tsv will be present in `${path_to_raw}/${processed}/${SLIDEID}/${expID}_profiles_output_${SLIDEID}`.
+
+> **Warning**
+> With FOVs with very few cells the segmentation might fail with the default options. You might see some over splitting. In this case, try:
+> 1. Increasing the nuclei diameter
+> 2. Setting `Standardize image for segmentation` to True
+> 3. Setting use deconvolved DAPI to False
+> Please try only one of these options at the time. If the problem persists consider using an alternative segmentation procedure (to be implemented soon).
