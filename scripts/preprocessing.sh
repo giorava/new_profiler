@@ -1,6 +1,7 @@
 #!/bin/bash                     
 
 # Load Modules and set env variables
+source ${HOME}/.bashrc
 eval "$(conda shell.bash hook)"
 conda activate new_profiler
 module load python/3.9.10

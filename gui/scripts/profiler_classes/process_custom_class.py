@@ -37,8 +37,10 @@ class ProcessCustom():
 
         # create output directory if necessary
         self.output_folder = f"{self.path_to_raw_folder}/{self.slideID}"
-        if not os.path.isdir(self.output_folder): 
-            os.mkdir(self.output_folder)       
+        try: 
+            os.mkdir(self.output_folder)   
+        except FileExistsError:
+            warnings.warn(f"{self.output_folder} exists, skipping creation")
 
         # extract deconvolution metadata
         logging.info(f" Reading metadata {self.imageID}") 
