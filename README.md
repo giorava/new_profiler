@@ -76,7 +76,9 @@ After choosing the path of your raw images with `browse` you can complete the ot
 
 > **Warning**
 > With FOVs with very few cells the segmentation might fail with the default options. You might see some over splitting. In this case, try:
+> 
 > 1. Increasing the nuclei diameter
 > 2. Setting `Standardize image for segmentation` to True
 > 3. Setting use deconvolved DAPI to False
+>    
 > Please try only one of these options at the time. If the problem persists consider using an alternative segmentation procedure (to be implemented soon).
