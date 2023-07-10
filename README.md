@@ -54,6 +54,7 @@ To run the analysis using the GUI you have to follow the following preliminary s
     ```
 4. run the GUI
     ```
+    cd ${path_to_gui_folder}
     python GUI.py
     ```
 
