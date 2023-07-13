@@ -84,8 +84,70 @@ After choosing the path of your raw images with `browse` you can complete the ot
 > Please try only one of these options at the time. If the problem persists consider using an alternative segmentation procedure (to be implemented soon).
 
 ## Output structure
-.
+
+before preprocessing
+```
 └── test_SLIDE001_01.nd2
+```
+after preprocessing, cleaning and FOVs plotting
+```
+├── SLIDE001                                                          # output folder
+│   ├── CY5_SLIDE001_01.tiff
+│   ├── DAPI_SLIDE001_01.tiff
+│   ├── dw_CY5_SLIDE001_01.tiff
+│   ├── dw_DAPI_SLIDE001_01.tiff
+│   ├── FOV_plots
+│   │   ├── dw_CY5_SLIDE001_01.png
+│   │   └── dw_DAPI_SLIDE001_01.png
+│   ├── log_files
+│   │   ├── conversion_SLIDE001_01.log
+│   │   ├── dw_CY5_SLIDE001_01.tiff.log.txt
+│   │   ├── dw_DAPI_SLIDE001_01.tiff.log.txt
+│   │   ├── dw_SLIDE001_01.log
+│   │   ├── PSF_1.25_1.406_438.0_284.0_300.0.tiff.log.txt
+│   │   ├── PSF_1.25_1.406_684.0_284.0_300.0.tiff.log.txt
+│   │   └── PSF_SLIDE001_01.log
+│   └── PSF
+│       ├── PSF_1.25_1.406_438.0_284.0_300.0.tiff
+│       └── PSF_1.25_1.406_684.0_284.0_300.0.tiff
+├── TEST_preprocessing_0.log
+└── test_SLIDE001_01.nd2
+```
+
+after segmentation 
+```
+├── SLIDE001
+│   ├── CY5_SLIDE001_01.tiff
+│   ├── DAPI_SLIDE001_01.tiff
+│   ├── dw_CY5_SLIDE001_01.tiff
+│   ├── dw_DAPI_SLIDE001_01.tiff
+│   ├── FOV_plots
+│   │   ├── dw_CY5_SLIDE001_01.png
+│   │   ├── dw_DAPI_SLIDE001_01.png
+│   │   └── mask_dw_DAPI_SLIDE001_01.tiff.png
+│   ├── log_files
+│   │   ├── conversion_SLIDE001_01.log
+│   │   ├── dw_CY5_SLIDE001_01.tiff.log.txt
+│   │   ├── dw_DAPI_SLIDE001_01.tiff.log.txt
+│   │   ├── dw_SLIDE001_01.log
+│   │   ├── PSF_1.25_1.406_438.0_284.0_300.0.tiff.log.txt
+│   │   ├── PSF_1.25_1.406_684.0_284.0_300.0.tiff.log.txt
+│   │   └── PSF_SLIDE001_01.log
+│   ├── masks
+│   │   └── mask.01.tiff
+│   └── PSF
+│       ├── PSF_1.25_1.406_438.0_284.0_300.0.tiff
+│       └── PSF_1.25_1.406_684.0_284.0_300.0.tiff
+├── TEST_preprocessing_0.log
+├── TEST_segmentation_GPU.log
+└── test_SLIDE001_01.nd2
+```
+
+after profile estimation
+```
+
+```
+
 
 ## Running outside the HT computational cluster
 
