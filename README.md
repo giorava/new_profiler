@@ -83,7 +83,7 @@ After choosing the path of your raw images with `browse` you can complete the ot
 >    
 > Please try only one of these options at the time. If the problem persists consider using an alternative segmentation procedure (to be implemented soon).
 
-## Running outside the computational cluster
+## Running outside the HT computational cluster
 
 
 ## Running as a command line tool
