@@ -145,7 +145,39 @@ after segmentation
 
 after profile estimation
 ```
-
+├── SLIDE001
+│   ├── CY5_SLIDE001_01.tiff
+│   ├── DAPI_SLIDE001_01.tiff
+│   ├── dw_CY5_SLIDE001_01.tiff
+│   ├── dw_DAPI_SLIDE001_01.tiff
+│   ├── FOV_plots
+│   │   ├── dw_CY5_SLIDE001_01.png
+│   │   ├── dw_DAPI_SLIDE001_01.png
+│   │   └── mask_dw_DAPI_SLIDE001_01.tiff.png
+│   ├── log_files
+│   │   ├── conversion_SLIDE001_01.log
+│   │   ├── dw_CY5_SLIDE001_01.tiff.log.txt
+│   │   ├── dw_DAPI_SLIDE001_01.tiff.log.txt
+│   │   ├── dw_SLIDE001_01.log
+│   │   ├── PSF_1.25_1.406_438.0_284.0_300.0.tiff.log.txt
+│   │   ├── PSF_1.25_1.406_684.0_284.0_300.0.tiff.log.txt
+│   │   └── PSF_SLIDE001_01.log
+│   ├── masks
+│   │   └── mask.01.tiff
+│   ├── PSF
+│   │   ├── PSF_1.25_1.406_438.0_284.0_300.0.tiff
+│   │   └── PSF_1.25_1.406_684.0_284.0_300.0.tiff
+│   └── TEST_profiles_output_SLIDE001
+│       ├── mean_intensity_profiles_CY5.tsv
+│       ├── mean_intensity_profiles_DAPI.tsv
+│       ├── median_intensity_profiles_CY5.tsv
+│       ├── median_intensity_profiles_DAPI.tsv
+│       ├── nuclei_stats_CY5.tsv
+│       └── nuclei_stats_DAPI.tsv
+├── TEST_preprocessing_0.log
+├── TEST_profile.log
+├── TEST_segmentation_GPU.log
+└── test_SLIDE001_01.nd2
 ```
 
 
