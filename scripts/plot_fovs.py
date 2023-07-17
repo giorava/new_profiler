@@ -3,6 +3,7 @@ import numpy as np
 import os, argparse, re
 import tifffile
 import logging
+import warnings 
 logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__": 
@@ -16,11 +17,18 @@ if __name__ == "__main__":
 
     logging.info(f" Plotting FOVs in {args.image_folder}")
     deconvolved_yfish_images = [f"{args.image_folder}/{f}" for f in os.listdir(args.image_folder) if re.match(f"dw_{args.YFISH_channel_name}+.*\.tiff", f)]
+    not_dw_yfish_images = [f"{args.image_folder}/{f}" for f in os.listdir(args.image_folder) if re.match(f"{args.YFISH_channel_name}+.*\.tiff", f)]
+    if len(deconvolved_yfish_images)==0: 
+        yfish_images = not_dw_yfish_images
+    elif len(deconvolved_yfish_images)!=0: 
+        yfish_images = deconvolved_yfish_images
+    else: 
+        warnings.warn("TIFF files not found, double check extensions and names")
 
     if not os.path.isdir(f"{args.image_folder}/FOV_plots"):
         os.mkdir(f"{args.image_folder}/FOV_plots")
 
-    for file in deconvolved_yfish_images: 
+    for file in yfish_images: 
 
         logging.info(f"Plotting {file}")
 

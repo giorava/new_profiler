@@ -11,8 +11,6 @@ import argparse
 from scipy.stats import norm
 from sklearn.mixture import GaussianMixture as GMM
 
-from plot_functions import *
-
 def load_data(paths, name_file): 
     
     dict_data = dict()
@@ -24,6 +22,29 @@ def load_data(paths, name_file):
             warnings.warn(f"{data_frame_path} not found")
     
     return dict_data
+
+    
+def bootstrapping_and_fit_boxplot(x, y_datas, deg):
+        
+    samples_mean = []
+    samples_low_CI = []
+    samples_high_CI = []
+    for data in y_datas: 
+        samples = []
+        for i in range(500):
+            samp = np.random.choice(data, len(data)//2, replace=False)
+            samples.append(samp)
+        _mean = np.mean([np.mean(i) for i in samples])
+        _std = np.std([np.mean(i) for i in samples])
+        samples_mean.append(_mean)
+        samples_low_CI.append(_mean-3*_std)
+        samples_high_CI.append(_mean+3*_std)
+                    
+    pol_fit_mean = np.polyfit(x, samples_mean, deg)
+    pol_CI_low = np.polyfit(x, samples_low_CI, deg)
+    pol_CI_high = np.polyfit(x, samples_high_CI, deg)
+    
+    return np.poly1d(pol_fit_mean),  np.poly1d(pol_CI_low),  np.poly1d(pol_CI_high)
 
 
 if __name__ == "__main__": 
@@ -55,11 +76,19 @@ if __name__ == "__main__":
     output_folder = f"{output_plots}/nuclei_selection"
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
-    
+    output_folder_plots = f"{output_plots}/profiles_output"
+    if not os.path.isdir(output_folder_plots):
+        os.mkdir(output_folder_plots)
+        
+    oredered_keys =  np.array([i for i in nuc_stats.keys()])
+    slide_ids = np.array([float(re.search("SLIDE[0-9][0-9][0-9]",i).group()[-3:]) for i in oredered_keys])
+    oredered_keys = oredered_keys[np.argsort(slide_ids)]
+
     ## clustering 
-    nucl_indexes = {i:np.array([]) for i in nuc_stats.keys()}
+    nucl_indexes = {i:np.array([]) for i in oredered_keys}
     stats_list = ""
-    for key in nuc_stats.keys(): 
+    areas = []
+    for key in oredered_keys: 
         slide_id = re.search("SLIDE[0-9][0-9][0-9]", key).span()
         slide_id = key[slide_id[0]:slide_id[1]]
         
@@ -91,7 +120,6 @@ if __name__ == "__main__":
         x_intensity =  np.array(high_intensity).reshape(-1, 1)
         
         ## find the optimal number of components
-        
         bics_area = []
         bics_intensity = []
         min_bic_area = 0
@@ -190,10 +218,34 @@ if __name__ == "__main__":
             ## clustering 
         nucl_indexes[key] = np.array(filtered["nucleus_label"])
         stats_list += stats
-            
+    
+        areas.append(filtered["areas"])
         print(stats)  
         
         
+    fig, axs = plt.subplots()    
+    labels = [re.search("SLIDE[0-9][0-9][0-9]",i).group() for i in oredered_keys]
+    seaborn.violinplot(areas, color = "tab:orange", axs = axs)
+    new_x = np.linspace(0, len(labels)-1)
+    _mean, _CI_low, _CI_high =bootstrapping_and_fit_boxplot(np.arange(0, len(labels)), areas, deg = 3)
+    plt.fill_between(new_x, _CI_low(new_x), _CI_high(new_x), alpha = 0.5, color = "gray")
+    plt.plot(new_x, _mean(new_x), color = "red")
+    axs.set_xticks(np.arange(0, len(labels)), labels=labels)
+    axs.set_ylabel("Area")
+    plt.savefig(f"{output_folder}/areas")
+    plt.close()
+    
+    fig, axs = plt.subplots()    
+    labels = [re.search("SLIDE[0-9][0-9][0-9]",i).group() for i in oredered_keys]
+    seaborn.violinplot([np.log2(i) for i in areas], color = "tab:orange", axs = axs)    
+    _mean, _CI_low, _CI_high =bootstrapping_and_fit_boxplot(np.arange(0, len(labels)), [np.log2(i) for i in areas], deg = 3)
+    plt.fill_between(new_x, _CI_low(new_x), _CI_high(new_x), alpha = 0.5, color = "gray")
+    plt.plot(new_x, _mean(new_x), color = "red")
+    axs.set_xticks(np.arange(0, len(labels)), labels=labels)
+    axs.set_ylabel("log10 Area")
+    plt.savefig(f"{output_folder}/log10 areas")
+    plt.close()
+    
     with open(f"{output_folder}/selected_nuclei_idexes.pkl", "wb") as f:
         pickle.dump(nucl_indexes, f)    
             
