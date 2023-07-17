@@ -5,6 +5,7 @@
 #SBATCH --mem=60GB
 #SBATCH --output=inference.log
 
+source ${HOME}/.bashrc
 eval "$(conda shell.bash hook)"
 conda activate pyro_env
 
