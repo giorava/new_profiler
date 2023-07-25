@@ -181,7 +181,7 @@ After the segmentation, an additional folder is created containing the mask file
 └── test_SLIDE001_01.nd2
 ```
 
-After running the profile estimation a folder called \*_profiles_output_SLIDE001 is created containing the .tsv files outputs of all the channels.  
+After running the profile estimation a folder called \*_profiles_output_SLIDE001 is created containing the .tsv files outputs of all the channels. To plot the profiles copy this folder in the plot_profiles folder and run the scripts as explained in the next paragraph. 
 ```
 ├── SLIDE001
 │   ├── CY5_SLIDE001_01.tiff
@@ -216,46 +216,6 @@ After running the profile estimation a folder called \*_profiles_output_SLIDE001
 ├── TEST_profile.log
 ├── TEST_segmentation_GPU.log
 └── test_SLIDE001_01.nd2
-```
-After cleaning
-
-```
-├── config.ini
-├── processed
-│   └── SLIDE001
-│       ├── CY5_SLIDE001_01.tiff
-│       ├── DAPI_SLIDE001_01.tiff
-│       ├── dw_CY5_SLIDE001_01.tiff
-│       ├── dw_DAPI_SLIDE001_01.tiff
-│       ├── FOV_plots
-│       │   ├── dw_CY5_SLIDE001_01.png
-│       │   ├── dw_DAPI_SLIDE001_01.png
-│       │   └── mask_dw_DAPI_SLIDE001_01.tiff.png
-│       ├── log_files
-│       │   ├── conversion_SLIDE001_01.log
-│       │   ├── dw_CY5_SLIDE001_01.tiff.log.txt
-│       │   ├── dw_DAPI_SLIDE001_01.tiff.log.txt
-│       │   ├── dw_SLIDE001_01.log
-│       │   ├── PSF_1.25_1.406_438.0_284.0_300.0.tiff.log.txt
-│       │   ├── PSF_1.25_1.406_684.0_284.0_300.0.tiff.log.txt
-│       │   └── PSF_SLIDE001_01.log
-│       ├── masks
-│       │   └── mask.01.tiff
-│       ├── PSF
-│       │   ├── PSF_1.25_1.406_438.0_284.0_300.0.tiff
-│       │   └── PSF_1.25_1.406_684.0_284.0_300.0.tiff
-│       └── TEST_profiles_output_SLIDE001
-│           ├── mean_intensity_profiles_CY5.tsv
-│           ├── mean_intensity_profiles_DAPI.tsv
-│           ├── median_intensity_profiles_CY5.tsv
-│           ├── median_intensity_profiles_DAPI.tsv
-│           ├── nuclei_stats_CY5.tsv
-│           └── nuclei_stats_DAPI.tsv
-├── raw
-│   └── test_SLIDE001_01.nd2
-├── TEST_preprocessing_0.log
-├── TEST_profile.log
-└── TEST_segmentation_GPU.log
 ```
 
 ## Running outside the HT computational cluster
