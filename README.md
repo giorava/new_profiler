@@ -74,11 +74,13 @@ The following window will appear:
 
 
 To run the **preprocessing**:
+
 1. Select the raw data folder using the `Browse` button.
 2. Display the metadata with `Show Metadata` and use this info to fill in the standard option fields.
-3. Fill in your account details in the `User Name` field
-4. Double-check the advanced options. Particularly, `Preprocessing Estimated Time`, `Perform Deconvolution during preprocessing` and `Memory required per image`
-5. Press `Submit preprocessing`
+3. Fill in your account details in the `User Name` field.
+4. Double-check the advanced options. Particularly, `Preprocessing Estimated Time`, `Perform Deconvolution during preprocessing` and `Memory required per image`.
+5. Press `Submit preprocessing`.
+
 At this stage, the preprocessing is running. You can monitor the job using the `Show queue` button.
 
 
