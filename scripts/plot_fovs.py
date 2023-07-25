@@ -44,7 +44,10 @@ if __name__ == "__main__":
         plt.imshow(image_mid_z, cmap = "bone", vmin = 0, vmax = np.max(image_mid_z)*1.3)
         
         plt.title(f"{base}, {fov_idx}", fontsize = 20)
-        plt.savefig(f"{args.image_folder}/FOV_plots/dw_{args.YFISH_channel_name}_{slide_idx}_{fov_idx}.png")
+        if len(deconvolved_yfish_images)==0:
+            plt.savefig(f"{args.image_folder}/FOV_plots/{args.YFISH_channel_name}_{slide_idx}_{fov_idx}.png")
+        elif len(deconvolved_yfish_images)>0: 
+            plt.savefig(f"{args.image_folder}/FOV_plots/dw_{args.YFISH_channel_name}_{slide_idx}_{fov_idx}.png")
         plt.close()
 
     logging.info(f"--------")

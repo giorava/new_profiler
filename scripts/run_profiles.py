@@ -16,6 +16,8 @@ if __name__ == "__main__":
                         help = "pixel dimension in physical space along y axis (nm)")
     parser.add_argument('--pixel_dz', type = str, 
                         help = "pixel dimension in physical space along z axis (nm)")
+    parser.add_argument('--deconvolved_for_profile', type = str, 
+                        help = "Whether or not to use deconvolved images to compute the profiles")
     args = parser.parse_args()
 
     # create output folder
@@ -27,7 +29,8 @@ if __name__ == "__main__":
     pofiler = compute_profiles.ComputeProfiles(
         image_folder=args.image_folder, 
         fluorescence_ch_name=args.fluorescence_ch_name, 
-        pixel_dimensions=(float(args.pixel_dz), float(args.pixel_dy), float(args.pixel_dx)) 
+        pixel_dimensions=(float(args.pixel_dz), float(args.pixel_dy), float(args.pixel_dx)), 
+        use_dw =  args.deconvolved_for_profile
     )
 
     # compute nuclear statistics and save in nuclei_stats.tsv

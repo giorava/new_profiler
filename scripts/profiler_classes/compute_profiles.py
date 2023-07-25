@@ -23,12 +23,13 @@ logging.basicConfig(level=logging.INFO)
 class ComputeProfiles(): 
     
     def __init__(self, image_folder: str, fluorescence_ch_name: str, 
-                     pixel_dimensions: list) -> None: 
+                     pixel_dimensions: list, use_dw: str) -> None: 
 
         self.image_folder = image_folder
         self.mask_folder = f"{image_folder}/masks"
         self.fluorescence_ch_name = fluorescence_ch_name
         self.pixel_dimensions = pixel_dimensions
+        self.use_dw = use_dw
         self.file_paths = self.__images_and_masks_paths()
         self.props = self.__compute_properties()
         return None
@@ -38,17 +39,17 @@ class ComputeProfiles():
         dw_flo = [f for f in os.listdir(self.image_folder) if re.match(f"dw_{self.fluorescence_ch_name}+.*\.tiff", f)]
         non_dw_flo = [f for f in os.listdir(self.image_folder) if re.match(f"{self.fluorescence_ch_name}+.*\.tiff", f)]
 
-        if len(dw_flo)>0: 
+        if self.use_dw=="True": 
             files = [(i, "mask."+i.split("_")[-1].split(".")[0]+".tiff") for i in dw_flo]
             files = [(self.image_folder+"/"+i[0], self.mask_folder+"/"+i[1]) for i in files]
             return np.array(files)
 
-        elif len(non_dw_flo)>0: 
+        elif self.use_dw=="False": 
             files = np.array([(i, "mask."+i.split("_")[-1].split(".")[0]+".tiff") for i in non_dw_flo])
             files = [(self.image_folder+"/"+i[0], self.mask_folder+"/"+i[1]) for i in files]
             return np.array(files)
         else: 
-            raise Exception(f"No images found in {self.image_folder} for {self.fluorescence_ch_name}")
+            raise Exception(f"No images found in {self.image_folder} for {self.fluorescence_ch_name} with 'Use deconvolved images for profile computation' {self.use_dw}")
 
     @property
     def get_paths(self): 
@@ -57,7 +58,7 @@ class ComputeProfiles():
     def __compute_properties(self): 
         properties = []
         for flo_path, labels_path in self.file_paths:
-            logging.info(f"Computing Properties img {labels_path}")
+            logging.info(f"Computing Properties img {flo_path}")
             labels_img, flo_img = tifffile.imread(labels_path), tifffile.imread(flo_path)
             _prop = measure.regionprops(labels_img, flo_img, 
                                         spacing = self.pixel_dimensions)
@@ -98,14 +99,7 @@ class ComputeProfiles():
 
         logging.info(f" Computing radial profiles for {self.fluorescence_ch_name}")
         for region in tqdm(self.props):
-            
-            #to be implemented : area filter
-            #if region.area < 1000:
-            #    label = region.label
-            #    mean_intensity.loc[label] = np.nan
-            #    median_intesity.loc[label] = np.nan
-            #    continue
-            
+                        
             label = region.label
                 
             reg = region.image_intensity
@@ -114,7 +108,7 @@ class ComputeProfiles():
                                     reg.shape[2]+2))
             region_int[1:-1, 1:-1, 1:-1] = reg        
                 
-            # compute pixel distance from background
+            # compute pixel distance from background elements
             trasform, idx = ndi.distance_transform_edt(region_int,
                                                         return_indices = True, 
                                                         sampling = self.pixel_dimensions)   

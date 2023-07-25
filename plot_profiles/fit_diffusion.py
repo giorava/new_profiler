@@ -246,45 +246,45 @@ if __name__ == "__main__":
     plt.savefig("test_minimize")
     plt.close()
 
-    # #### bayesian regression with pyro
-    # x = torch.linspace(0.001, 1, len(yfish_data))
-    # y = torch.tensor(yfish_data, dtype=torch.float32)
-    # t = torch.tensor(time, dtype=torch.float32)
+    #### bayesian regression with pyro
+    x = torch.linspace(0.001, 1, len(yfish_data))
+    y = torch.tensor(yfish_data, dtype=torch.float32)
+    t = torch.tensor(time, dtype=torch.float32)
     
-    # def model(r, YFISH_data, timepoint):
-    #     # Define priors       
-    #     sigma = pyro.sample("sigma", dist.Normal(loc = 1, scale = 1))
-    #     D_prior = pyro.sample("D_coeff", dist.Normal(loc = min_results[0], scale = min_results[0]*0.5))
+    def model(r, YFISH_data, timepoint):
+        # Define priors       
+        sigma = pyro.sample("sigma", dist.Normal(loc = 1, scale = 1))
+        D_prior = pyro.sample("D_coeff", dist.Normal(loc = min_results[0], scale = min_results[0]*0.5))
 
-    #     # Define likelihood
-    #     mu = diffusion(r=r, D=D_prior, t=timepoint)
-    #     pyro.sample("yfish_pred", dist.Normal(mu, sigma), obs=YFISH_data)
+        # Define likelihood
+        mu = diffusion(r=r, D=D_prior, t=timepoint)
+        pyro.sample("yfish_pred", dist.Normal(mu, sigma), obs=YFISH_data)
 
-    # # Perform inference step with Markov Chain Monte Carlo
-    # nuts_kernel = NUTS(model)
-    # mcmc = MCMC(nuts_kernel, num_samples=200, warmup_steps=10, num_chains=1)
-    # mcmc.run(r=x, YFISH_data=y, timepoint=t)
+    # Perform inference step with Markov Chain Monte Carlo
+    nuts_kernel = NUTS(model)
+    mcmc = MCMC(nuts_kernel, num_samples=400, warmup_steps=10, num_chains=1)
+    mcmc.run(r=x, YFISH_data=y, timepoint=t)
 
-    # # retrieve the D_app
-    # trace = mcmc.get_samples()
-    # D_app_dist = trace["D_coeff"]
-    # np.savetxt("posterior_D_coeff.txt", D_app_dist)
+    # retrieve the D_app
+    trace = mcmc.get_samples()
+    D_app_dist = trace["D_coeff"]
+    np.savetxt("posterior_D_coeff.txt", D_app_dist)
         
-    # #ypredict = diffusion(r = r, D = D_app_dist, t = time)
-    # q1, q5, q9 = np.quantile(D_app_dist, q = (0.05, 0.5, 0.95))
-    # r = np.linspace(0.0001, 1, len(yfish_data))
-    # predict_up = diffusion(r = r, D = q9, t = time)
-    # predict_median = diffusion(r = r, D = q5, t = time)
-    # predict_low = diffusion(r = r, D = q1, t = time)
-    # plt.fill_between(r, predict_up, predict_low, color = "gray", alpha = 0.5)
-    # plt.plot(r, predict_median, color = "red", label = f"median posterior D_app: {round(q5, 5)}")
-    # plt.scatter(r_clipped, yfish_data, color = "k", alpha = 0.5)
+    #ypredict = diffusion(r = r, D = D_app_dist, t = time)
+    q1, q5, q9 = np.quantile(D_app_dist, q = (0.05, 0.5, 0.95))
+    r = np.linspace(0.0001, 1, len(yfish_data))
+    predict_up = diffusion(r = r, D = q9, t = time)
+    predict_median = diffusion(r = r, D = q5, t = time)
+    predict_low = diffusion(r = r, D = q1, t = time)
+    plt.fill_between(r, predict_up, predict_low, color = "gray", alpha = 0.5)
+    plt.plot(r, predict_median, color = "red", label = f"median posterior D_app: {round(q5, 5)}")
+    plt.scatter(r_clipped, yfish_data, color = "k", alpha = 0.5)
     
-    # plt.xlabel("clippled x axis", fontsize = 20)
-    # plt.xlabel("Normalized intensity", fontsize = 20)
+    plt.xlabel("clippled x axis", fontsize = 20)
+    plt.xlabel("Normalized intensity", fontsize = 20)
    
-    # plt.show()
-    # plt.savefig("Bayesian_regression")
-    # plt.close()
+    plt.show()
+    plt.savefig("Bayesian_regression")
+    plt.close()
         
     
