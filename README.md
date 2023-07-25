@@ -37,11 +37,12 @@ you should see the help page of each dependency.
 
 ## Running with the GUI
 
-To run the analysis using the GUI you have to follow the following preliminary steps where HT_USER is your user name: 
+The package contains a graphical interphase that can be used to run all the steps. To access GUI.py while keeping all the analysis running on the cluster you need to install MobaXterm (if Windows user) or xquartz (if Mac user). 
+To run the analysis using the GUI follow these steps: 
 
 1. log into the cluster using X11 forwarding:
     ```
-    ssh -YC ${HT_USER}@hpclogin.fht.org
+    ssh -YC ${HT_USER}@${loginNode}
     ```
 2. start an interactive session with X11 forwarding:
     ```
