@@ -9,6 +9,8 @@ The general workflow of the pipeline is exemplified in the figure. Briefly:
 3.	**Profile generation**: the final radial profiles are then computed using the exact Euclidean distance from background elements determined on the mask files of step 2. 
 The output of the analysis is a series of .tsv files containing the profile output for each nucleus and statistics about the nuclei's shape, area etc. Currently, the profiles are plotted using separate scripts in plot_profiles. 
 
+
+
 <br>
 <figure>  
 <p align="center">
@@ -98,7 +100,7 @@ At this stage, the preprocessing is running. You can monitor the job using the `
 3. Press `Submit segmentation`
 
 > **Warning**
-> With FOVs with very few cells the segmentation might fail with the default options. You might see some over splitting. In this case, try:
+> With FOVs with very few cells the segmentation might fail with the default options. You might see some over-splitting. In this case, try:
 > 
 > 1. Increasing the nuclei diameter
 > 2. Setting `Standardize image for segmentation` to True
@@ -117,6 +119,20 @@ To run the <strong>Profile Computation</strong>:
 3. Press `Submit profiler`
 
 Once the job is completed, you can reorganize the output folder by using `After run cleaning`
+
+
+<br>
+<figure>  
+<p align="center">
+<img src="https://github.com/giorava/new_profiler/assets/107054086/5ff789a2-b7da-401d-bd76-b25506f9f2c2" width="600"></a>
+<figcaption>  
+  <p align="center">
+    Processing workflow.
+  </p>
+</figcaption>
+</p>
+</figure>
+
 
 <br>
 <h2>
