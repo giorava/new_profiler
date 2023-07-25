@@ -82,6 +82,7 @@ def cost_function(D, distance_array, yfish_array, time_array):
         mse = (1/n)*np.sum((yfish-interpolated_predicted)**2)
         cost += mse 
     
+    #return np.sqrt(cost)
     return cost
 
 def minimization_step(distance_array, yfish_array, time_array, initial_guess):
@@ -118,19 +119,19 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description="Estimate the apparent diffusion constant for GPSeq score calculation \
     using Bayesian regression")
-    parser.add_argument("--path_to_clipped_profiles", 
-                        help = "Absolute path to the clipped data .pkl generated during the profile computation")
+    parser.add_argument("--path_to_profiles", 
+                        help = "Absolute path to the data .pkl generated during the profile computation")
     parser.add_argument("--time", type = str, 
                         help = "Time point in seconds")
-    parser.add_argument("--SLIDEID", type = str, 
-                        help = "SLIDEID of the slide to fit with timepoint define in time")
+    parser.add_argument("--time_idx", type = str, 
+                        help = "index of the timepoint")
     parser.add_argument("--clip_infletion", type = str, 
                         help = "(True/False) Whether to clip the profiles at the infletion point (be carefull)")
     args = parser.parse_args()
 
-    path_to_profiles = args.path_to_clipped_profiles
+    path_to_profiles = args.path_to_profiles
     time = float(args.time)
-    slide_ID = args.SLIDEID
+    time_ID = int(args.time_idx)
     clip = args.clip_infletion
     
     
@@ -138,14 +139,24 @@ if __name__ == "__main__":
     with open(path_to_profiles, 'rb') as fp:
         clipped_profiles = pickle.load(fp)
         
-    ### retrieve the data for the slide to fit
-    key = [i for i in clipped_profiles.keys() if re.search(slide_ID, i)][0]
-    selected_data = clipped_profiles[key]
-    #r_clipped = selected_data["d_clipped"]
-    #yfish_data = selected_data["points_prof_clipped"]/np.max(selected_data["points_prof_clipped"])
-    r_before_clipping_inversion = selected_data["d_clipped"]
-    yfish_before_clipping_inversion = selected_data["points_prof_clipped"]/np.max(selected_data["points_prof_clipped"])
-
+    mean_profile, distance, yfish_over_dapi = clipped_profiles["mean"][time_ID], clipped_profiles["distance"][time_ID], clipped_profiles["yfish_over_dapi"][time_ID]
+    
+    #### fitting mean with polyfit
+    Z = np.polyfit(distance,  mean_profile, deg = 10)
+    pol = np.poly1d(Z)
+    r = np.linspace(0, 1, 1000)
+    y_pred = pol(r)
+    grad1 = np.gradient(y_pred)
+    maximum = np.where(np.diff(np.sign(grad1)))[0]     
+    if len(maximum)>1: 
+        r_max_loc = r[maximum[-2]]
+    else: 
+        r_max_loc = r[maximum[0]]
+    print(f"max location {r_max_loc}")
+    sele_YFISH = mean_profile[distance > r_max_loc]
+    yfish_before_clipping_inversion = sele_YFISH/(np.max(sele_YFISH))
+    r_before_clipping_inversion = np.linspace(0, 1, len(yfish_before_clipping_inversion))  ## suboptimal
+    
     ## fitting polynomial
     Z = np.polyfit(r_before_clipping_inversion,  yfish_before_clipping_inversion, deg = 5)
     pol = np.poly1d(Z)
@@ -174,17 +185,19 @@ if __name__ == "__main__":
         r_clipped = r_before_clipping_inversion
         yfish_data = yfish_before_clipping_inversion
         
+    # plt.scatter(r_clipped, yfish_data)
+    # plt.savefig("test")
+        
     
     ### split datasets and plot some stuff
     indexs = np.arange(0, len(r_clipped))
     index_train, index_test = train_test_split(indexs, test_size = 0.2)
     X_train, X_test = r_clipped[index_train], r_clipped[index_test]
     Y_train, Y_test = yfish_data[index_train], yfish_data[index_test]
-    plt.scatter(X_train, Y_train, color = "green")
-    plt.scatter(X_test, Y_test, color = "red")
-    plt.show()
-    plt.savefig("test")
-    plt.close()
+    # plt.scatter(X_train, Y_train, color = "green")
+    # plt.scatter(X_test, Y_test, color = "red")
+    # plt.show()
+    
     
     ### Brute force optimization to find the initial guess (the mse is convex)
     logging.info(' BRUTE optimization to find the initial guess')
@@ -209,9 +222,11 @@ if __name__ == "__main__":
     print(opt_initial_guess, min_results)
     r = np.linspace(0.0001, 1, len(yfish_data))
     ypredict = diffusion(r = r, D = min_results[0] , t = time)
-    plt.scatter(X_test, Y_test, color = "red")
-    plt.scatter(X_train, Y_train, color = "green")
+    plt.scatter(X_test, Y_test, color = "red",  s = 10)
+    plt.scatter(X_train, Y_train, color = "green", s = 10)
     plt.plot(r, ypredict, color = "red")
+    # plt.savefig("test")
+    # plt.close()
     
     test_error = cost_function(D = min_results[0], distance_array = [X_test], yfish_array = [Y_test], time_array = [time])
     training_error = cost_function(D = min_results[0], distance_array = [X_train], yfish_array = [Y_train], time_array = [time])
@@ -225,55 +240,51 @@ if __name__ == "__main__":
     
     plt.xlabel("Clipped distance from lamina")
     plt.ylabel("Normalized YFISH signal to maximum")  
-    plt.title(f"Best fit {slide_ID}, timepoint = {time/60} min \n Apparent Diffusion constant = {min_results[0]}")
+    plt.title(f"Best fit SLIDE00{time_ID+1}, timepoint = {time/60} min \n Apparent Diffusion constant = {min_results[0]}")
     plt.legend()
     plt.show()
     plt.savefig("test_minimize")
     plt.close()
 
-    #### bayesian regression with pyro
-    x = torch.linspace(0.001, 1, len(yfish_data))
-    y = torch.tensor(yfish_data, dtype=torch.float32)
-    t = torch.tensor(time, dtype=torch.float32)
+    # #### bayesian regression with pyro
+    # x = torch.linspace(0.001, 1, len(yfish_data))
+    # y = torch.tensor(yfish_data, dtype=torch.float32)
+    # t = torch.tensor(time, dtype=torch.float32)
     
-    def model(r, YFISH_data, timepoint):
-        # Define priors       
-        sigma = pyro.sample("sigma", dist.Normal(loc = 1, scale = 1))
-        D_prior = pyro.sample("D_coeff", dist.Normal(loc = min_results[0], scale = min_results[0]*0.5))
+    # def model(r, YFISH_data, timepoint):
+    #     # Define priors       
+    #     sigma = pyro.sample("sigma", dist.Normal(loc = 1, scale = 1))
+    #     D_prior = pyro.sample("D_coeff", dist.Normal(loc = min_results[0], scale = min_results[0]*0.5))
 
-        # Define likelihood
-        mu = diffusion(r=r, D=D_prior, t=timepoint)
-        pyro.sample("yfish_pred", dist.Normal(mu, sigma), obs=YFISH_data)
+    #     # Define likelihood
+    #     mu = diffusion(r=r, D=D_prior, t=timepoint)
+    #     pyro.sample("yfish_pred", dist.Normal(mu, sigma), obs=YFISH_data)
 
-    # Perform inference step with Markov Chain Monte Carlo
-    nuts_kernel = NUTS(model)
-    mcmc = MCMC(nuts_kernel, num_samples=200, warmup_steps=10, num_chains=1)
-    mcmc.run(r=x, YFISH_data=y, timepoint=t)
+    # # Perform inference step with Markov Chain Monte Carlo
+    # nuts_kernel = NUTS(model)
+    # mcmc = MCMC(nuts_kernel, num_samples=200, warmup_steps=10, num_chains=1)
+    # mcmc.run(r=x, YFISH_data=y, timepoint=t)
 
-    # retrieve the D_app
-    trace = mcmc.get_samples()
-    D_app_dist = trace["D_coeff"]
-    np.savetxt("posterior_D_coeff.txt", D_app_dist)
-    
-    # bootstrap to estimate the coefficient
-    samples = []
-    for i in range(5000):
-        samp = np.random.choice(D_app_dist, len(D_app_dist)//4, replace=False)
-        samples.append(samp)        
-    mean_dist = [np.mean(i) for i in samples]   
-    mean_of_mean = np.mean(mean_dist) 
-    
-    for D_app_samp in D_app_dist: 
-        r = np.linspace(0.0001, 1, len(yfish_data))
-        predict_ = diffusion(r = r, D = D_app_samp, t = time)
-        plt.plot(r, predict_, color = "gray", alpha = 0.1)
+    # # retrieve the D_app
+    # trace = mcmc.get_samples()
+    # D_app_dist = trace["D_coeff"]
+    # np.savetxt("posterior_D_coeff.txt", D_app_dist)
         
-    #ypredict = diffusion(r = r, D = D_app_dist, t = time)
-    plt.scatter(r_clipped, yfish_data, color = "k")
-    #plt.plot(r, ypredict, color = "red")
+    # #ypredict = diffusion(r = r, D = D_app_dist, t = time)
+    # q1, q5, q9 = np.quantile(D_app_dist, q = (0.05, 0.5, 0.95))
+    # r = np.linspace(0.0001, 1, len(yfish_data))
+    # predict_up = diffusion(r = r, D = q9, t = time)
+    # predict_median = diffusion(r = r, D = q5, t = time)
+    # predict_low = diffusion(r = r, D = q1, t = time)
+    # plt.fill_between(r, predict_up, predict_low, color = "gray", alpha = 0.5)
+    # plt.plot(r, predict_median, color = "red", label = f"median posterior D_app: {round(q5, 5)}")
+    # plt.scatter(r_clipped, yfish_data, color = "k", alpha = 0.5)
     
-    plt.show()
-    plt.savefig("Bayesian_regression")
-    plt.close()
+    # plt.xlabel("clippled x axis", fontsize = 20)
+    # plt.xlabel("Normalized intensity", fontsize = 20)
+   
+    # plt.show()
+    # plt.savefig("Bayesian_regression")
+    # plt.close()
         
     
