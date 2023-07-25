@@ -54,7 +54,7 @@ To run the analysis using the GUI follow these steps:
     ```
 4. run the GUI
     ```
-    cd ${path_to_repository}
+    cd ${path_to_repo}
     python GUI.py
     ```
 
