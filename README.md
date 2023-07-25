@@ -85,11 +85,6 @@ The following window will appear:
 <figure>  
 <p align="center">
 <img src="https://github.com/giorava/new_profiler/assets/107054086/05f2cd30-c5e1-4929-885a-017c6b0e27a3" width="600"></a>
-<figcaption>  
-  <p align="center">
-    Processing workflow.
-  </p>
-</figcaption>
 </p>
 </figure>
 
@@ -112,11 +107,6 @@ At this stage, the preprocessing is running. You can monitor the job using the `
 <figure>  
 <p align="center">
 <img src="https://github.com/giorava/new_profiler/assets/107054086/034690a2-6265-4bd7-95ac-82834e41f321" width="600"></a>
-<figcaption>  
-  <p align="center">
-    Processing workflow.
-  </p>
-</figcaption>
 </p>
 </figure>
 
@@ -142,11 +132,6 @@ To run the <strong>Profile Computation</strong>:
 <figure>  
 <p align="center">
 <img src="https://github.com/giorava/new_profiler/assets/107054086/048853ec-469b-4668-8d25-4a52f98a7806" width="600"></a>
-<figcaption>  
-  <p align="center">
-    Processing workflow.
-  </p>
-</figcaption>
 </p>
 </figure>
 
