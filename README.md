@@ -123,12 +123,11 @@ Once the job is completed, you can reorganize the output folder by using `After 
 Output structure
 </h2>
 
-
-before preprocessing
+Before the preprocessing, the raw folder should contain only the raw images. It is ok if the file is multi-FOV. The only strick requirement is that the file name should contain SLIDE### identifying the ID of the corresponding slide.
 ```
 └── test_SLIDE001_01.nd2
 ```
-after preprocessing, cleaning and FOVs plotting
+After the preprocessing, cleaning and FOVs plotting a new folder named following the SLIDE### is created. In this folder the tiff files of the splitted channels and the corresponding deconvolved images are present. There are three additional subfolders: FOV_plots, containing png images of the middle plane of each field of view; log_files, containing the log files of conversion and deconvolution; PSF containing the point spread function models used for the deconvolution. 
 ```
 ├── SLIDE001                                                          # output folder
 │   ├── CY5_SLIDE001_01.tiff
@@ -153,7 +152,7 @@ after preprocessing, cleaning and FOVs plotting
 └── test_SLIDE001_01.nd2
 ```
 
-after segmentation 
+After the segmentation, an additional folder is created containing the mask files of the FOV. During the mask generation, the corresponding middle plane images are stored as png in the FOV_plots folder for subsequent inspection. Please double-check the goodness of the mask generation before proceeding further.
 ```
 ├── SLIDE001
 │   ├── CY5_SLIDE001_01.tiff
@@ -182,7 +181,7 @@ after segmentation
 └── test_SLIDE001_01.nd2
 ```
 
-after profile estimation
+After profile estimation
 ```
 ├── SLIDE001
 │   ├── CY5_SLIDE001_01.tiff
