@@ -181,7 +181,7 @@ After the segmentation, an additional folder is created containing the mask file
 └── test_SLIDE001_01.nd2
 ```
 
-After profile estimation
+After running the profile estimation a folder called \*_profiles_output_SLIDE001 is created containing the .tsv files outputs of all the channels.  
 ```
 ├── SLIDE001
 │   ├── CY5_SLIDE001_01.tiff
