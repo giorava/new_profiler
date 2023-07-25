@@ -63,7 +63,7 @@ The following window will appear:
 <br>
 <figure>  
 <p align="center">
-<img src="https://github.com/giorava/new_profiler/assets/107054086/db8e873b-91ea-4ae3-8371-aceb5692d245" width="900"></a>
+<img src="https://github.com/giorava/new_profiler/assets/107054086/9795abaf-d899-41c2-bb28-94aecf71aa36" width="900"></a>
 <figcaption>  
   <p align="center">
     GUI window.
