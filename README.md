@@ -73,7 +73,11 @@ The following window will appear:
 </figure>
 
 
-To run the **preprocessing**:
+
+<br>
+<h3>
+  To run the <strong>Preprocessing</strong>:
+</h3>
 
 1. Select the raw data folder using the `Browse` button.
 2. Display the metadata with `Show Metadata` and use this info to fill in the standard option fields.
@@ -84,7 +88,10 @@ To run the **preprocessing**:
 
 At this stage, the preprocessing is running. You can monitor the job using the `Show queue` button. Once the preprocessing is finished you can proceed with `Clean folders` and `Plot FOVS`. 
 
-To run the **segmentation**:
+<br>
+<h3>
+  To run the <strong>Segmentation</strong>:
+</h3>
 
 1. Adjust the `Estimated nuclei diameter` using the FOV plots of the preprocessing step, or by opening the images in Fiji.
 2. Double check the advanced fields `Segmention Estimated Time`, `Use deconvolved DAPI for segmentation` and `Standardize image for segmentation`.
@@ -99,7 +106,11 @@ To run the **segmentation**:
 >    
 > Please try only one of these options at the time. If the problem persists consider using an alternative segmentation procedure (to be implemented soon) or retrain CellPose on your data.
 
-To run **Profile computation**:
+<br>
+<h3>
+To run the <strong>Profile Computation</strong>:
+</h3>
+
 
 1. Double-check the mask files.
 2. Double check the advanced field `Use deconvolved images for profile computation`
@@ -107,7 +118,11 @@ To run **Profile computation**:
 
 Once the job is completed, you can reorganize the output folder by using `After run cleaning`
 
-## Output structure
+<br>
+<h2>
+Output structure
+</h2>
+
 
 before preprocessing
 ```
