@@ -87,7 +87,7 @@ At this stage, the preprocessing is running. You can monitor the job using the `
 To run the **segmentation**:
 
 1. Adjust the `Estimated nuclei diameter` using the FOV plots of the preprocessing step, or by opening the images in Fiji.
-2. Double check the fields  `Segmention Estimated Time`, `Use deconvolved DAPI for segmentation` and `Standardize image for segmentation`.
+2. Double check the advanced fields `Segmention Estimated Time`, `Use deconvolved DAPI for segmentation` and `Standardize image for segmentation`.
 3. Press `Submit segmentation`
 
 > **Warning**
@@ -98,6 +98,14 @@ To run the **segmentation**:
 > 3. Setting use deconvolved DAPI to False
 >    
 > Please try only one of these options at the time. If the problem persists consider using an alternative segmentation procedure (to be implemented soon) or retrain CellPose on your data.
+
+To run **Profile computation**:
+
+1. Double-check the mask files.
+2. Double check the advanced field `Use deconvolved images for profile computation`
+3. Press `Submit profiler`
+
+Once the job is completed, you can reorganize the output folder by using `After run cleaning`
 
 ## Output structure
 
