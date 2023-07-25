@@ -1,5 +1,3 @@
-<<<<<<< dev
-=======
 # New profiler (RadiantKit2.0)
 
 The general purpose of the application is to detect and quantify the radial distribution of fluorescent signals in nuclei imaged with a variety of wide-field fluorescent microscopy techniques (see https://www.nature.com/articles/s41587-020-0519-y). To do so, we developed a python3-based analysis pipeline thought to run remotely on the Human Technopole HPC cluster together with a user-friendly GUI. 
@@ -226,4 +224,3 @@ After cleaning
 
 
 ## Running as a command line tool
->>>>>>> main
