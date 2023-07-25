@@ -1,7 +1,6 @@
 # Configuration files #
 ###################
-*BICRO*.config
-gui_cluster/config.ini
+config*
 gui_no_cluster/config.ini
 
 # Data folder #
@@ -10,7 +9,14 @@ data/*/
 plot_profiles/*/
 plot_profiles/*.png
 scripts/__pycache__
-gui/__pycache__
+gui_no_cluster/__pycache__
 test
 .vscode
-gui/*.ini
+
+# folders to ignore #
+#####################
+old_set_of_scripts
+
+# sbatch jobs #
+#####################
+plot_profiles/run_fit.sh
