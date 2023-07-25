@@ -56,12 +56,15 @@ if __name__ == "__main__":
                             help='Dapi Channel Name')
     parser.add_argument('--yfish_ch_name', type=str,
                             help='YFISH Channel Name')
+    # parser.add_argument('--max_gauss', type=str,
+    #                         help="Maximum number of gaussian models")
     args = parser.parse_args()
 
     ## Set Variables
     pattern=args.expID
     dapi_ch_name=args.dapi_ch_name
     yfish_ch_name=args.yfish_ch_name
+    # max_gauss = int(args.max_gauss)
 
     ## load datasets
     data_directories=[i for i in os.listdir() if re.search(pattern, i)]
@@ -100,6 +103,9 @@ if __name__ == "__main__":
         y_pred = KMeans(n_clusters=2, n_init = "auto").fit_predict(X)
         dataset["cluster"] = y_pred
         
+        seaborn.scatterplot(dataset, x="log10_area", y = "log10_int_intensity", hue ="cluster")
+        plt.savefig(f"test {key}")
+        
         ### find the higher cluster
         data_cluster_0 = dataset[dataset["cluster"]==0]
         data_cluster_1 = dataset[dataset["cluster"]==1]
@@ -119,35 +125,37 @@ if __name__ == "__main__":
         x_areas = np.array(high_areas).reshape(-1, 1)
         x_intensity =  np.array(high_intensity).reshape(-1, 1)
         
-        ## find the optimal number of components
-        bics_area = []
-        bics_intensity = []
-        min_bic_area = 0
-        min_bic_intensity = 0
-        opt_bic_area = 0
-        opt_bic_intensity = 0
-        for i in range(3): 
-            gaus_mixture = GMM(n_components = i+1, 
-                               max_iter = 1000, 
-                               random_state = 0, 
-                               covariance_type = 'full')
-            labels_areas = gaus_mixture.fit(x_areas).predict(x_areas)
-            labels_intensity = gaus_mixture.fit(x_intensity).predict(x_intensity)
-            bic_area = gaus_mixture.bic(x_areas)
-            bic_intensity = gaus_mixture.bic(x_intensity)
+        # ## find the optimal number of components
+        # bics_area = []
+        # bics_intensity = []
+        # min_bic_area = 0
+        # min_bic_intensity = 0
+        # opt_bic_area = 0
+        # opt_bic_intensity = 0
+        # for i in range(max_gauss): 
+        #     gaus_mixture = GMM(n_components = i+1, 
+        #                        max_iter = 1000, 
+        #                        random_state = 0, 
+        #                        covariance_type = 'full')
+        #     labels_areas = gaus_mixture.fit(x_areas).predict(x_areas)
+        #     labels_intensity = gaus_mixture.fit(x_intensity).predict(x_intensity)
+        #     bic_area = gaus_mixture.bic(x_areas)
+        #     bic_intensity = gaus_mixture.bic(x_intensity)
             
-            bics_area.append(bic_area)
-            bics_intensity.append(bic_intensity)
+        #     bics_area.append(bic_area)
+        #     bics_intensity.append(bic_intensity)
             
-            if bic_area < min_bic_area or min_bic_area == 0:
-                if i != 0:
-                    min_bic_area = bic_area
-                    opt_bic_area = i+1
-            if bic_intensity < min_bic_intensity or min_bic_intensity == 0:
-                if i != 0:
-                    min_bic_intensity = bic_intensity
-                    opt_bic_intensity = i+1
+        #     if bic_area < min_bic_area or min_bic_area == 0:
+        #         if i != 0:
+        #             min_bic_area = bic_area
+        #             opt_bic_area = i+1
+        #     if bic_intensity < min_bic_intensity or min_bic_intensity == 0:
+        #         if i != 0:
+        #             min_bic_intensity = bic_intensity
+        #             opt_bic_intensity = i+1
                 
+        opt_bic_area = 2
+        opt_bic_intensity = 2
         ### fit the gaussians
         gmm_area = GMM(n_components = opt_bic_area, 
                         max_iter = 1000, 
@@ -173,7 +181,7 @@ if __name__ == "__main__":
         for mean, cov, weight in zip(mean_intensity, cov_intensity, weights_intensity):
             g = norm.pdf(x_axis_intensity, float(mean[0]), np.sqrt(float(cov[0][0])))*weight
             intensities_fits.append(g)     
-        intensities_fits=np.array(intensities_fits)   
+        intensities_fits=np.array(intensities_fits)           
             
         ### select the G1 gaussian (IF G1 cells are the most abundant)    
         max_gauss_area = np.max(np.max(area_fits, axis = 1))
@@ -211,7 +219,7 @@ if __name__ == "__main__":
         stats = f"\
         {slide_id}: \n \
             Initial Number of Objects: {dataset.shape[0]}\n \
-            After Debried removal: {higher_cluster.shape[0]}\n \
+            After Debride removal: {higher_cluster.shape[0]}\n \
             After G1 filtering: {filtered.shape[0]}\n"
             
             

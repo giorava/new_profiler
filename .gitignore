@@ -1,6 +1,8 @@
 # Configuration files #
 ###################
 *BICRO*.config
+gui_cluster/config.ini
+gui_no_cluster/config.ini
 
 # Data folder #
 ###################
