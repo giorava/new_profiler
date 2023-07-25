@@ -81,6 +81,19 @@ The following window will appear:
   To run the <strong>Preprocessing</strong>:
 </h3>
 
+<br>
+<figure>  
+<p align="center">
+<img src="https://github.com/giorava/new_profiler/assets/107054086/05f2cd30-c5e1-4929-885a-017c6b0e27a3" width="600"></a>
+<figcaption>  
+  <p align="center">
+    Processing workflow.
+  </p>
+</figcaption>
+</p>
+</figure>
+
+
 1. Select the raw data folder using the `Browse` button.
 2. Display the metadata with `Show Metadata` and use this info to fill in the standard option fields.
 3. Fill in your account details in the `User Name` field.
@@ -94,6 +107,18 @@ At this stage, the preprocessing is running. You can monitor the job using the `
 <h3>
   To run the <strong>Segmentation</strong>:
 </h3>
+
+<br>
+<figure>  
+<p align="center">
+<img src="https://github.com/giorava/new_profiler/assets/107054086/034690a2-6265-4bd7-95ac-82834e41f321" width="600"></a>
+<figcaption>  
+  <p align="center">
+    Processing workflow.
+  </p>
+</figcaption>
+</p>
+</figure>
 
 1. Adjust the `Estimated nuclei diameter` using the FOV plots of the preprocessing step, or by opening the images in Fiji.
 2. Double check the advanced fields `Segmention Estimated Time`, `Use deconvolved DAPI for segmentation` and `Standardize image for segmentation`.
@@ -113,18 +138,10 @@ At this stage, the preprocessing is running. You can monitor the job using the `
 To run the <strong>Profile Computation</strong>:
 </h3>
 
-
-1. Double-check the mask files.
-2. Double check the advanced field `Use deconvolved images for profile computation`
-3. Press `Submit profiler`
-
-Once the job is completed, you can reorganize the output folder by using `After run cleaning`
-
-
 <br>
 <figure>  
 <p align="center">
-<img src="https://github.com/giorava/new_profiler/assets/107054086/5ff789a2-b7da-401d-bd76-b25506f9f2c2" width="600"></a>
+<img src="https://github.com/giorava/new_profiler/assets/107054086/048853ec-469b-4668-8d25-4a52f98a7806" width="600"></a>
 <figcaption>  
   <p align="center">
     Processing workflow.
@@ -132,6 +149,13 @@ Once the job is completed, you can reorganize the output folder by using `After 
 </figcaption>
 </p>
 </figure>
+
+
+1. Double-check the mask files.
+2. Double check the advanced field `Use deconvolved images for profile computation`
+3. Press `Submit profiler`
+
+Once the job is completed, you can reorganize the output folder by using `After run cleaning`
 
 
 <br>
