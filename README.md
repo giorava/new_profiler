@@ -217,8 +217,4 @@ After running the profile estimation a folder called \*_profiles_output_SLIDE001
 ├── TEST_segmentation_GPU.log
 └── test_SLIDE001_01.nd2
 ```
-
-## Running outside the HT computational cluster
-
-
-## Running as a command line tool
+To plot the profiles refer to the README.md in the plot_profiles folder.
