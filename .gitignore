@@ -20,3 +20,6 @@ old_set_of_scripts
 # sbatch jobs #
 #####################
 plot_profiles/run_fit.sh
+
+#python caches
+*.pyc
