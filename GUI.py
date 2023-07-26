@@ -2,26 +2,95 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 import configparser
+from tkinter import ttk 
 from preprocessing import *
 from segmentation import *
 from profile import *
 
+
+# Create a new style with a rounded button
+
+
+interactive_button = 'Button.TButton'
+static_button = 'Button2.TButton'
+frame_name = 'LF.TLabelframe'
+frame2 = 'frameL.TLabelframe.Label'
+
 class EnvironmentVariableGUI:
     def __init__(self, root):
 
-        self.config_file = "config.ini"
         self.root = root
+        self.config_file = "config.ini"
+        # Set the background color of the main window
+        #**ZK----------------------------------------------
+        self.root.config(bg="#1f1f1f",) 
+        self.root.configure(bg="#111111")
+        # self.root.geometry("800x600")gir
+        style = ttk.Style()
+        style.theme_use('clam')
+
+        #configuring the button and frame styles-----------------------------------------------------
+        ##Buttons
+        style.configure(interactive_button, 
+                        relief="groove", 
+                        background="#191970",
+                        foreground="#f1f1f1", 
+                        font=("Arial Bold", 11), 
+                        padx=10, pady=5,
+                        focuscolor="#191970", 
+                        focusthickness=0, 
+                        anchor="center",
+                        radius=20)
+        
+        style.configure(static_button, 
+                        relief="raised", 
+                        background="#111111",
+                        foreground="#f1f1f1", 
+                        font=("Calibri Bold", 10), 
+                        padx=10, pady=5,
+                        focuscolor="#191970", 
+                        focusthickness=0, 
+                        anchor="center",
+                        radius=20)
+
+        
+        ##Frames---------------------------------------------------------------------------------------
+        style.configure(frame_name, 
+                        background="#1f1f1f",
+                        relief="groove",
+                        borderwidth=15,
+                        radius=0.5,
+                        font=("Calibri Bold", 10)
+                        )
+        style.configure(frame2,
+                        background="#1f1f1f",
+                        foreground="#f3f3f3",
+                        relief="groove",
+                        borderwidth=15,
+                        radius=0.5,
+                        font=("Calibri Bold", 14),
+                        anchor='nw',
+
+                        )
+
+        style.map(interactive_button, background=[("active", "blue")])
+        # style.map(frame_name, background=[("active", "blue")])  # Change color when active  
+        #*****___________________________________
+
+
         self.root.title("Nuclei Profiler GUI")
         self.path_to_scripts = f"{os.getcwd()}/scripts"
         self.path_to_bin = f"{os.getcwd()}/bin"
 
-        self.standard_frame = tk.LabelFrame(self.root, text="Standard Options")
+
+
+        self.standard_frame = ttk.LabelFrame(self.root,text="Standard Options",style=frame_name)
         self.standard_frame.grid(row=0, columnspan=2, sticky="ew", padx=10, pady=10)  
 
         self.raw_folder_path_entry = self.create_entry("Raw Folder Path:", 0)
-        self.browse_button = tk.Button(self.standard_frame, text="Browse", command=self.browse_directory)
+        self.browse_button = ttk.Button(self.standard_frame, text="Browse", command=self.browse_directory,style=interactive_button)
         self.browse_button.grid(row=0, column=2)
-        self.browse_button = tk.Button(self.standard_frame, text="Show Metadata", command=self.show_metadata)
+        self.browse_button = ttk.Button(self.standard_frame, text="Show Metadata", command=self.show_metadata, style=interactive_button)
         self.browse_button.grid(row=1, column=1)
         
         self.expID_entry  = self.create_entry('Experiment ID', 2)
@@ -34,12 +103,13 @@ class EnvironmentVariableGUI:
         self.pixel_dz_entry = self.create_entry('Pixel dz', 9)
         self.estimated_nuc_diameter_entry  = self.create_entry('Estimate nuclei diameter', 10)
         self.user_name_entry = self.create_entry("User name (name.surname)", 22)
-        self.squeue_button = tk.Button(self.standard_frame, text="Show queue", command=self.show_queue)
+        self.squeue_button = ttk.Button(self.standard_frame, text="Show queue", command=self.show_queue,style=interactive_button)
         self.squeue_button.grid(row=22, column=2)
-                                                        
-        self.advanced_frame = tk.LabelFrame(self.root, text="Advanced Options")
+        #advanced frame                                                
+        self.advanced_frame = ttk.LabelFrame(self.root, text="Advanced Options",style=frame_name)
         self.advanced_frame.grid(row=0, column = 2, columnspan=2, sticky="ew", padx=10, pady=10)                                                 
         
+        #ADVANCED OPTIONS PART
         self.preprocessing_estimated_time_entry  = self.show_advance_options('Preprocessing Estimated Time', 11)
         self.preprocessing_estimated_time_entry.insert(0, "03:00:00")
         self.perform_decolvolution_entry  = self.show_advance_options('Perform deconvolution during preprocessing (True/False)', 12)
@@ -57,51 +127,59 @@ class EnvironmentVariableGUI:
         self.deconvolved_for_profile_entry = self.show_advance_options('Use deconvolved images for profile computation', 18)
         self.deconvolved_for_profile_entry.insert(0, "False")
         
-        self.config = tk.LabelFrame(self.root, text="Manage configuration file")
+        self.config = ttk.LabelFrame(self.root, text="Manage configuration file",style=frame_name)
         self.config.grid(row=19, column=0, columnspan=1, sticky="ew", padx=10, pady=10)
         
-        self.save_button = tk.Button(self.config, text="Save configuration", command=self.save_to_config)
+        #SAVE BUTTON--------------------------------------------------------------------------------------------------------------
+        self.save_button = ttk.Button(self.config, text="Save configuration", command=self.save_to_config,style=interactive_button)
         self.save_button.grid(row=19, column=3)
-        self.delete_button = tk.Button(self.config, text="Clear configuration", command=self.delate_config)
+        #DELETE BUTTON-----------------------------------------------------
+        self.delete_button = ttk.Button(self.config, text="Clear configuration", command=self.delate_config,style=interactive_button)
         self.delete_button.grid(row=20, column=3)
-        self.export_button = tk.Button(self.config, text="Export configuration", command=self.export_config)
+        #EXPORT BUTTON-----------------------------------------------------
+        self.export_button = ttk.Button(self.config, text="Export configuration", command=self.export_config,style=interactive_button)
         self.export_button.grid(row=21, column=3)
-        
-        self.preprocessing_frame = tk.LabelFrame(self.root, text="Preprocessing")
+        #PREPROCESSING------------------------------------------------------------------------------------------------------------
+        ##Frame
+        self.preprocessing_frame = ttk.LabelFrame(self.root, text="Preprocessing",style=frame_name)
         self.preprocessing_frame.grid(row=19, column=1, columnspan=1, sticky="ew", padx=10, pady=10)
-        self.preprocessing_button = tk.Button(self.preprocessing_frame, text="Submit preprocessing", command=self.preprocessing)
+        ##Buttons
+        self.preprocessing_button = ttk.Button(self.preprocessing_frame, text="Submit preprocessing", command=self.preprocessing, style=interactive_button)
         self.preprocessing_button.grid(row=19, column=3)  
-        self.preprocessing_button = tk.Button(self.preprocessing_frame, text="Clean folders", command=self.clean_folders_preproc)
+        self.preprocessing_button = ttk.Button(self.preprocessing_frame, text="Clean folders", command=self.clean_folders_preproc, style=interactive_button)
         self.preprocessing_button.grid(row=20, column=3)  
-        self.preprocessing_button = tk.Button(self.preprocessing_frame, text="Plot FOVS", command=self.plot_fovs)
+        self.preprocessing_button = ttk.Button(self.preprocessing_frame, text="Plot FOVS", command=self.plot_fovs, style=interactive_button)
         self.preprocessing_button.grid(row=21, column=3)  
         
-        self.segmentation_frame = tk.LabelFrame(self.root, text="Segmentation")
+        #SEGMENTATION-------------------------------------------------------------------------------------------------------------
+        self.segmentation_frame = ttk.LabelFrame(self.root, text="Segmentation",style=frame_name)
         self.segmentation_frame.grid(row=19, column=2, columnspan=1, sticky="ew", padx=10, pady=10)
-        self.preprocessing_button = tk.Button(self.segmentation_frame, text="Submit segmentation", command=self.segmentation)
+        self.preprocessing_button = ttk.Button(self.segmentation_frame, text="Submit segmentation", command=self.segmentation, style=interactive_button)
         self.preprocessing_button.grid(row=19, column=3)
         
-        self.profile_frame = tk.LabelFrame(self.root, text="Compute Profiles")
+        #PROFILING----------------------------------------------------------------------------------------------------------------
+        self.profile_frame = ttk.LabelFrame(self.root, text="Compute Profiles",style=frame_name)
         self.profile_frame.grid(row=19, column=3, columnspan=1, sticky="ew", padx=10, pady=10)
-        self.preprocessing_button = tk.Button(self.profile_frame, text="Submit profiler", command=self.profiler)
+        self.preprocessing_button = ttk.Button(self.profile_frame, text="Submit profiler", command=self.profiler, style=interactive_button)
         self.preprocessing_button.grid(row=19, column=3) 
-        self.preprocessing_button = tk.Button(self.profile_frame, text="After run cleaning", command=self.after_run_cleaning)
+        self.preprocessing_button = ttk.Button(self.profile_frame, text="After run cleaning", command=self.after_run_cleaning, style=interactive_button)
         self.preprocessing_button.grid(row=20, column=3) 
         
+
         self.raw_folder_path = ""
         self.load_config()
         
     def show_advance_options(self, name, row): 
-        label = tk.Label(self.advanced_frame, text=name)
+        label = ttk.Label(self.advanced_frame, text=name, style=static_button)
         label.grid(row=row, column=0)
-        entry= tk.Entry(self.advanced_frame)
+        entry= ttk.Entry(self.advanced_frame)
         entry.grid(row=row, column=1)
         return entry
             
     def create_entry(self, name, row):
-        label = tk.Label(self.standard_frame, text=name)
+        label = ttk.Label(self.standard_frame, text=name, style=static_button)
         label.grid(row=row, column=0)
-        entry= tk.Entry(self.standard_frame)
+        entry= ttk.Entry(self.standard_frame,)
         entry.grid(row=row, column=1)
         return entry        
 
