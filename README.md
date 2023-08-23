@@ -14,7 +14,7 @@ The output of the analysis is a series of .tsv files containing the profile outp
 <br>
 <figure>  
 <p align="center">
-<img src="https://github.com/giorava/new_profiler/assets/107054086/7a6f2655-80c6-40fc-a66d-605bd1f59949" width="900"></a>
+<img src="https://github.com/giorava/new_profiler/blob/main/figures/general_workflow.PNG" width="800"></a>
 <figcaption>  
   <p align="center">
     Figure 1. General workflow of the RadiantKit analysis. 
@@ -65,7 +65,7 @@ The following window will appear:
 <br>
 <figure>  
 <p align="center">
-<img src="https://github.com/giorava/new_profiler/assets/107054086/9795abaf-d899-41c2-bb28-94aecf71aa36" width="900"></a>
+<img src="https://github.com/giorava/new_profiler/blob/main/figures/gui_window.PNG" width="500"></a>
 <figcaption>  
   <p align="center">
     GUI window.
@@ -84,7 +84,7 @@ The following window will appear:
 <br>
 <figure>  
 <p align="center">
-<img src="https://github.com/giorava/new_profiler/assets/107054086/05f2cd30-c5e1-4929-885a-017c6b0e27a3" width="600"></a>
+<img src="https://github.com/giorava/new_profiler/blob/main/figures/step1.PNG" width="600"></a>
 </p>
 </figure>
 
@@ -106,7 +106,7 @@ At this stage, the preprocessing is running. You can monitor the job using the `
 <br>
 <figure>  
 <p align="center">
-<img src="https://github.com/giorava/new_profiler/assets/107054086/034690a2-6265-4bd7-95ac-82834e41f321" width="600"></a>
+<img src="https://github.com/giorava/new_profiler/blob/main/figures/step2.PNG" width="600"></a>
 </p>
 </figure>
 
@@ -131,7 +131,7 @@ To run the <strong>Profile Computation</strong>:
 <br>
 <figure>  
 <p align="center">
-<img src="https://github.com/giorava/new_profiler/assets/107054086/048853ec-469b-4668-8d25-4a52f98a7806" width="600"></a>
+<img src="https://github.com/giorava/new_profiler/blob/main/figures/step3.PNG" width="600"></a>
 </p>
 </figure>
 
